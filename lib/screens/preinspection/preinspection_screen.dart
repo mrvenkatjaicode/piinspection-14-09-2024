@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
+import 'package:tuple/tuple.dart';
 
 import '../../bloc/preinspection/preinspection_bloc.dart';
 import '../../bloc/preinspection/preinspection_event.dart';
@@ -28,6 +29,10 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
   String? tabName;
   List<bool> isImageUploaded = [];
   List<String> imageUrl = [];
+  List<Tuple2<String?, String?>?> tabNameList = [];
+
+  List<Tuple2<String?, String?>?> commonStrings = [];
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -35,12 +40,55 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
       child: BlocConsumer<PreInspectionBloc, PreInspectionState>(
           listener: (context, state) async {
         if (state is PreInspectionImageSuccessState) {
+          debugPrint("PreInspection");
           tabName = state.tabDetails.first.split(":").first;
           tabDetails = state.tabDetails;
           pageController = state.pageController;
           tabController = state.tabController;
           isImageUploaded = List.filled(tabDetails.length, false);
           imageUrl = List.filled(tabDetails.length, "");
+        } else if (state is GetImageFromApiState) {
+          for (int i = 0; i < tabDetails.length; i++) {
+            tabNameList.add(Tuple2(tabDetails[i].split(":")[0],
+                "" /* tabDetails[i].split(":")[1] */));
+          }
+          List<Tuple2<String?, String?>?> apiName = [];
+          for (int i = 0;
+              i < state.getImageResponse.response![0].imageresponse!.length;
+              i++) {
+            apiName.add(Tuple2(
+                state.getImageResponse.response![0].imageresponse![i].tagName!,
+                state
+                    .getImageResponse.response![0].imageresponse![i].xbizurl!));
+          }
+          // for (var tabTuple in tabNameList) {
+          //   if (apiName.contains(str)) {
+          //     commonStrings.add(str);
+
+          //   }
+          // }
+
+          // Iterate over each tuple in tabNameList
+          for (var tabTuple in tabNameList) {
+            // Ensure the tuple and its first item are not null
+            if (tabTuple != null && tabTuple.item1 != null) {
+              String? tabName =
+                  tabTuple.item1; // Extract the first value (tab name)
+
+              // Check if apiNameList contains a tuple where the first value matches tabName
+              var matchingApiTuple = apiName.firstWhere(
+                (apiTuple) => apiTuple != null && apiTuple.item1 == tabName,
+                orElse: () => null,
+              );
+
+              // If a match is found, add the matching tuple to commonStrings
+              if (matchingApiTuple != null) {
+                commonStrings.add(matchingApiTuple);
+              }
+            }
+          }
+
+          debugPrint(commonStrings.toString());
         } else if (state is NextPageState) {
           tabController!.index = state.index;
           tabName = state.tabName;
@@ -60,16 +108,27 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
               fileName: state.fileName,
               base64Image: state.base64Image));
         } else if (state is SelectDocIdState) {
-          context.read<PreInspectionBloc>().add(TakePhotEvent(
-                imageType: state.imageType,
-                referenceValue: '',
-                docType: state.tabType,
-                docId: '',
-                userId: '',
-                branch: '',
-                fileName: '',
-                base64Image: '',
-              ));
+          state.imageType == "Doc"
+              ? context.read<PreInspectionBloc>().add(TakeDocumentEvent(
+                    imageType: state.imageType,
+                    referenceValue: '',
+                    docType: state.tabType,
+                    docId: '',
+                    userId: '',
+                    branch: '',
+                    fileName: '',
+                    base64Image: '',
+                  ))
+              : context.read<PreInspectionBloc>().add(TakePhotEvent(
+                    imageType: state.imageType,
+                    referenceValue: '',
+                    docType: state.tabType,
+                    docId: '',
+                    userId: '',
+                    branch: '',
+                    fileName: '',
+                    base64Image: '',
+                  ));
         } else if (state is PreInspectionFailureState) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -80,6 +139,7 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
         }
       }, builder: (context, state) {
         if (state is PreInspectionInitialState) {
+          context.read<PreInspectionBloc>().add(GetImageFromApiEvent());
           debugPrint("Init");
         }
 
@@ -150,6 +210,10 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
                                 value, tabDetails[value].split(":")[0]));
                       },
                       itemBuilder: (BuildContext context, int itemIndex) {
+                        bool existsInTabData = tabNameList.any((tuple) =>
+                            tuple != null &&
+                            tuple.item1 == tabDetails[itemIndex].split(":")[0]);
+
                         return tabDetails[itemIndex].split(":")[0] ==
                                 "VIDEO RECORDING"
                             ? Image.asset(
@@ -338,32 +402,49 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
                                       ],
                                     ),
                                   )
-                                : isImageUploaded.isEmpty
-                                    ? null
-                                    : isImageUploaded[tabController!.index]
-                                        ? Image.network(
-                                            imageUrl[tabController!.index],
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
+                                : commonStrings.isNotEmpty &&
+                                        existsInTabData &&
+                                        commonStrings.length >
+                                            tabController!.index
+                                    ? Image.network(
+                                        commonStrings[tabController!.index]!
+                                                .item2 ??
+                                            "",
+                                        width:
+                                            MediaQuery.of(context).size.width *
                                                 3.5,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height /
+                                        height:
+                                            MediaQuery.of(context).size.height /
                                                 2,
-                                          )
-                                        : Image.memory(
-                                            base64Decode(tabDetails[itemIndex]
-                                                .split(":")[1]),
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                3.5,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height /
-                                                2,
-                                          );
+                                        fit: BoxFit.fill,
+                                      )
+                                    : isImageUploaded.isEmpty
+                                        ? null
+                                        : isImageUploaded[tabController!.index]
+                                            ? Image.network(
+                                                imageUrl[tabController!.index],
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    3.5,
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height /
+                                                    2,
+                                              )
+                                            : Image.memory(
+                                                base64Decode(
+                                                    tabDetails[itemIndex]
+                                                        .split(":")[1]),
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    3.5,
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height /
+                                                    2,
+                                              );
                       },
                     ),
                   ),

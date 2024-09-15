@@ -40,7 +40,7 @@ class ApiService {
           001, 'No Internet Connection\nPlease check your network status');
     }
 
-    debugPrint("res <- ${res.resBody.toString()}");
+    // debugPrint("res <- ${res.resBody.toString()}");
     return res;
   }
 }

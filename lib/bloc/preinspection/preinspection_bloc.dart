@@ -43,9 +43,9 @@ class PreInspectionBloc extends Bloc<PreInspectionEvent, PreInspectionState> {
       api.Response res = await api.ApiService().postRequest(
           "http://novaapiuat.shriramgi.com/UATShrigenAppService2.0/ShrigenServices/ServiceTransaction.svc/RestService/PreinspectionSearch",
           jsonEncode({
-            "PREINSPECTIONID": "1007780",
+            "PREINSPECTIONID": preInspectionId,
             "TAGNAME": "PI_REPORT_VIEWSEARCH",
-            "Userpartyid": "100000000138661",
+            "Userpartyid": userId,
             "Userip": ""
           }));
 
@@ -280,9 +280,20 @@ class PreInspectionBloc extends Bloc<PreInspectionEvent, PreInspectionState> {
     if (result == null) {
       emit(NoFilePicked());
       return;
+    } else {
+      final bytes = File(result.files.first.path!).readAsBytesSync();
+      final String file64 = base64Encode(bytes);
+      final String fileName = result.names[0] ?? '';
+      // var val = DateFormat("yyyyMMdd'_'HHmmss").format(DateTime.now());
+      //   var filename = val;
+      emit(FileUploadedSuccessfully(
+          referenceValue: attachmentId,
+          docType: "Image",
+          docId: event.docId,
+          userId: userId,
+          branch: "",
+          fileName: fileName,
+          base64Image: file64));
     }
-    final bytes = File(result.files.first.path!).readAsBytesSync();
-    final String file64 = base64Encode(bytes);
-    final String fileName = result.names[0] ?? '';
   }
 }

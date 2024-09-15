@@ -72,7 +72,25 @@ class TakePhotEvent extends PreInspectionEvent {
 
 class TakeVideoEvent extends PreInspectionEvent {}
 
-class TakeDocumentEvent extends PreInspectionEvent {}
+class TakeDocumentEvent extends PreInspectionEvent {
+  final String imageType;
+  final String referenceValue;
+  final String docType;
+  final String docId;
+  final String userId;
+  final String branch;
+  final String fileName;
+  final String base64Image;
+  const TakeDocumentEvent(
+      {required this.imageType,
+      required this.referenceValue,
+      required this.docType,
+      required this.docId,
+      required this.userId,
+      required this.branch,
+      required this.fileName,
+      required this.base64Image});
+}
 
 class SelectDocIdEvent extends PreInspectionEvent {
   final String title;
@@ -81,4 +99,4 @@ class SelectDocIdEvent extends PreInspectionEvent {
   const SelectDocIdEvent({required this.title, required this.imageType});
 }
 
-class GetImageFromApiEvent extends PreInspectionEvent{}
+class GetImageFromApiEvent extends PreInspectionEvent {}

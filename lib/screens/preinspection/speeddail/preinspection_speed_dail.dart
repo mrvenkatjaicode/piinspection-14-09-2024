@@ -90,7 +90,9 @@ class _PreInspectionFabWidgetState extends State<PreInspectionFabWidget> {
             label: 'From Docs & Pdf',
             labelStyle: const TextStyle(fontSize: 18.0),
             onTap: () {
-              preInspectionBloc.add(TakeDocumentEvent());
+               preInspectionBloc.add(
+                  SelectDocIdEvent(title: widget.tabType, imageType: "Doc"));
+             // preInspectionBloc.add(TakeDocumentEvent());
             },
           ),
         if (widget.tabType != "VIDEO RECORDING")

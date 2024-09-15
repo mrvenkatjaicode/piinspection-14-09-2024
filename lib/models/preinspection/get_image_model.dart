@@ -4,370 +4,380 @@
 
 import 'dart:convert';
 
-GetImageResponse getImageResponseFromJson(String str) => GetImageResponse.fromJson(json.decode(str));
+GetImageResponse getImageResponseFromJson(String str) =>
+    GetImageResponse.fromJson(json.decode(str));
 
-String getImageResponseToJson(GetImageResponse data) => json.encode(data.toJson());
+String getImageResponseToJson(GetImageResponse data) =>
+    json.encode(data.toJson());
 
 class GetImageResponse {
-    MessageResult? messageResult;
-    String? htmlGrid;
-    List<Response>? response;
+  MessageResult? messageResult;
+  String? htmlGrid;
+  List<Response>? response;
 
-    GetImageResponse({
-        this.messageResult,
-        this.htmlGrid,
-        this.response,
-    });
+  GetImageResponse({
+    this.messageResult,
+    this.htmlGrid,
+    this.response,
+  });
 
-    factory GetImageResponse.fromJson(Map<String, dynamic> json) => GetImageResponse(
-        messageResult: json["MessageResult"] == null ? null : MessageResult.fromJson(json["MessageResult"]),
+  factory GetImageResponse.fromJson(Map<String, dynamic> json) =>
+      GetImageResponse(
+        messageResult: json["MessageResult"] == null
+            ? null
+            : MessageResult.fromJson(json["MessageResult"]),
         htmlGrid: json["HTML_GRID"],
-        response: json["Response"] == null ? [] : List<Response>.from(json["Response"]!.map((x) => Response.fromJson(x))),
-    );
+        response: json["Response"] == null
+            ? []
+            : List<Response>.from(
+                json["Response"]!.map((x) => Response.fromJson(x))),
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "MessageResult": messageResult?.toJson(),
         "HTML_GRID": htmlGrid,
-        "Response": response == null ? [] : List<dynamic>.from(response!.map((x) => x.toJson())),
-    };
+        "Response": response == null
+            ? []
+            : List<dynamic>.from(response!.map((x) => x.toJson())),
+      };
 }
 
 class MessageResult {
-    dynamic errorMessage;
-    String? result;
-    String? successMessage;
+  dynamic errorMessage;
+  String? result;
+  String? successMessage;
 
-    MessageResult({
-        this.errorMessage,
-        this.result,
-        this.successMessage,
-    });
+  MessageResult({
+    this.errorMessage,
+    this.result,
+    this.successMessage,
+  });
 
-    factory MessageResult.fromJson(Map<String, dynamic> json) => MessageResult(
-        errorMessage: json["ErrorMessage"],
+  factory MessageResult.fromJson(Map<String, dynamic> json) => MessageResult(
+        errorMessage: json["ErrorMessage"] ?? "",
         result: json["Result"],
         successMessage: json["SuccessMessage"],
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
-        "ErrorMessage": errorMessage,
+  Map<String, dynamic> toJson() => {
+        "ErrorMessage": errorMessage ?? "",
         "Result": result,
         "SuccessMessage": successMessage,
-    };
+      };
 }
 
 class Response {
-    String? abandonedreason;
-    String? agencystatus;
-    String? agencyHoldCount;
-    String? agtCategory;
-    String? appointmentinfo;
-    String? approvalreason;
-    String? approvalReqByRemarks;
-    String? approvedby;
-    String? attachmentid;
-    String? auditfeedback;
-    String? auditremarks;
-    String? auditstatus;
-    String? adjustedApprovedDate;
-    String? approveddate;
-    String? branchid;
-    String? branchname;
-    String? branchClarification;
-    String? branchClarificationOthers;
-    String? branchClarificationRemarks;
-    String? branchHoldCount;
-    String? brokenparts;
-    String? chassisno;
-    String? chassisnoRs;
-    String? contactmobileno;
-    String? contactnoPrimary;
-    String? contactperson;
-    String? contacttoSendlink;
-    String? conveyanceamount;
-    String? currentyearclm;
-    String? currentyearclmremark;
-    String? customerremarks;
-    String? customerHoldCount;
-    String? city;
-    String? completeReportSubmittedeDate;
-    String? currentDate;
-    String? declaration;
-    String? dentedparts;
-    String? delayedCaseFlg;
-    String? district;
-    String? engincover;
-    String? engineno;
-    String? enginenoRs;
-    String? errortype;
-    String? errorToBeMarked;
-    String? extensionRemarks;
-    String? finalstatus;
-    String? fueltype;
-    String? firstName;
-    String? galleryimage;
-    String? gvw;
-    String? gvwRs;
-    String? holdtype;
-    dynamic hoUserFlag;
-    String? idvvehicle;
-    String? importexcess;
-    String? importexcessdetails;
-    String? inspectionlocation;
-    String? insuredname;
-    String? insurednameRs;
-    String? intermediariesname;
-    String? intimationcreatedby;
-    String? intimationcreateddate;
-    String? intimationcreatorloginid;
-    String? intimationpurpose;
-    String? intimationremarks;
-    String? isforphone;
-    List<Imageresponse>? imageresponse;
-    String? inspectionLocation1;
-    String? inspectionLocation2;
-    String? insuredPhone;
-    String? isApprovalReasonEnable;
-    String? landmark;
-    String? lastName;
-    String? make;
-    String? makeRs;
-    String? maxnoofHoldAgency;
-    String? maxnoofHoldBranch;
-    String? maxnoofHoldCustomer;
-    String? model;
-    String? modelRs;
-    String? modeofpayment;
-    String? mysgisource;
-    String? middleName;
-    String? ncbPer;
-    String? ncbPercentage;
-    String? noofphotosalert;
-    String? noofphotoscaptured;
-    String? noofphotosrequired;
-    String? odometerreading;
-    String? partyname;
-    String? photoattached;
-    String? pifeesamount;
-    String? pifeescollected;
-    dynamic pioLogBook;
-    dynamic pioUserFlag;
-    String? policyno;
-    String? preinspectionid;
-    String? previousby;
-    String? previousstatus;
-    String? productcode;
-    String? productname;
-    String? proposaltype;
-    String? pendingTimeClock;
-    String? pincode;
-    String? policyUrl;
-    String? premiaCode;
-    String? productCategory;
-    String? productCategoryRs;
-    String? rcverified;
-    String? reasoncanrejhold;
-    String? referencenumber;
-    String? refmobileno;
-    String? regNumberFormat;
-    String? remarksifcancelled;
-    String? reworkdone;
-    String? reworkrecommended;
-    String? rootorg;
-    String? remarks;
-    dynamic reopenRemarks;
-    String? repositoryAlert;
-    String? scratchedparts;
-    String? seatingcapacity;
-    String? seatingcapacityRs;
-    String? sgicpolicyno;
-    String? status;
-    String? statusname;
-    String? surveydate;
-    String? surveydoneby;
-    String? surveydonebyInsured;
-    String? surveyid;
-    String? surveyorid;
-    String? surveyormailid;
-    String? surveyorremark;
-    String? surveyortype;
-    SurveyorAgencyName? surveyorAgencyName;
-    String? surveySubmitDate;
-    dynamic specialApprovalAlert;
-    String? state;
-    dynamic surveyBy;
-    dynamic surveyorDoneFileList;
-    List<SurveyorList>? surveyorList;
-    String? typeofendor;
-    String? title;
-    String? vehicletype;
-    String? vehicleRegNo;
-    String? vehicleRegNoRs;
-    String? vehCategory;
-    String? vehCategoryRs;
-    String? vehRunningCondition;
-    String? videofileurl;
-    String? yearofmanuf;
-    String? yearofmanufRs;
-    String? claimnotapprovedfor;
+  String? abandonedreason;
+  String? agencystatus;
+  String? agencyHoldCount;
+  String? agtCategory;
+  String? appointmentinfo;
+  String? approvalreason;
+  String? approvalReqByRemarks;
+  String? approvedby;
+  String? attachmentid;
+  String? auditfeedback;
+  String? auditremarks;
+  String? auditstatus;
+  String? adjustedApprovedDate;
+  String? approveddate;
+  String? branchid;
+  String? branchname;
+  String? branchClarification;
+  String? branchClarificationOthers;
+  String? branchClarificationRemarks;
+  String? branchHoldCount;
+  String? brokenparts;
+  String? chassisno;
+  String? chassisnoRs;
+  String? contactmobileno;
+  String? contactnoPrimary;
+  String? contactperson;
+  String? contacttoSendlink;
+  String? conveyanceamount;
+  String? currentyearclm;
+  String? currentyearclmremark;
+  String? customerremarks;
+  String? customerHoldCount;
+  String? city;
+  String? completeReportSubmittedeDate;
+  String? currentDate;
+  String? declaration;
+  String? dentedparts;
+  String? delayedCaseFlg;
+  String? district;
+  String? engincover;
+  String? engineno;
+  String? enginenoRs;
+  String? errortype;
+  String? errorToBeMarked;
+  String? extensionRemarks;
+  String? finalstatus;
+  String? fueltype;
+  String? firstName;
+  String? galleryimage;
+  String? gvw;
+  String? gvwRs;
+  String? holdtype;
+  dynamic hoUserFlag;
+  String? idvvehicle;
+  String? importexcess;
+  String? importexcessdetails;
+  String? inspectionlocation;
+  String? insuredname;
+  String? insurednameRs;
+  String? intermediariesname;
+  String? intimationcreatedby;
+  String? intimationcreateddate;
+  String? intimationcreatorloginid;
+  String? intimationpurpose;
+  String? intimationremarks;
+  String? isforphone;
+  List<Imageresponse>? imageresponse;
+  String? inspectionLocation1;
+  String? inspectionLocation2;
+  String? insuredPhone;
+  String? isApprovalReasonEnable;
+  String? landmark;
+  String? lastName;
+  String? make;
+  String? makeRs;
+  String? maxnoofHoldAgency;
+  String? maxnoofHoldBranch;
+  String? maxnoofHoldCustomer;
+  String? model;
+  String? modelRs;
+  String? modeofpayment;
+  String? mysgisource;
+  String? middleName;
+  String? ncbPer;
+  String? ncbPercentage;
+  String? noofphotosalert;
+  String? noofphotoscaptured;
+  String? noofphotosrequired;
+  String? odometerreading;
+  String? partyname;
+  String? photoattached;
+  String? pifeesamount;
+  String? pifeescollected;
+  dynamic pioLogBook;
+  dynamic pioUserFlag;
+  String? policyno;
+  String? preinspectionid;
+  String? previousby;
+  String? previousstatus;
+  String? productcode;
+  String? productname;
+  String? proposaltype;
+  String? pendingTimeClock;
+  String? pincode;
+  String? policyUrl;
+  String? premiaCode;
+  String? productCategory;
+  String? productCategoryRs;
+  String? rcverified;
+  String? reasoncanrejhold;
+  String? referencenumber;
+  String? refmobileno;
+  String? regNumberFormat;
+  String? remarksifcancelled;
+  String? reworkdone;
+  String? reworkrecommended;
+  String? rootorg;
+  String? remarks;
+  dynamic reopenRemarks;
+  String? repositoryAlert;
+  String? scratchedparts;
+  String? seatingcapacity;
+  String? seatingcapacityRs;
+  String? sgicpolicyno;
+  String? status;
+  String? statusname;
+  String? surveydate;
+  String? surveydoneby;
+  String? surveydonebyInsured;
+  String? surveyid;
+  String? surveyorid;
+  String? surveyormailid;
+  String? surveyorremark;
+  String? surveyortype;
+  String? surveyorAgencyName;
+  String? surveySubmitDate;
+  dynamic specialApprovalAlert;
+  String? state;
+  dynamic surveyBy;
+  dynamic surveyorDoneFileList;
+  List<SurveyorList>? surveyorList;
+  String? typeofendor;
+  String? title;
+  String? vehicletype;
+  String? vehicleRegNo;
+  String? vehicleRegNoRs;
+  String? vehCategory;
+  String? vehCategoryRs;
+  String? vehRunningCondition;
+  String? videofileurl;
+  String? yearofmanuf;
+  String? yearofmanufRs;
+  String? claimnotapprovedfor;
 
-    Response({
-        this.abandonedreason,
-        this.agencystatus,
-        this.agencyHoldCount,
-        this.agtCategory,
-        this.appointmentinfo,
-        this.approvalreason,
-        this.approvalReqByRemarks,
-        this.approvedby,
-        this.attachmentid,
-        this.auditfeedback,
-        this.auditremarks,
-        this.auditstatus,
-        this.adjustedApprovedDate,
-        this.approveddate,
-        this.branchid,
-        this.branchname,
-        this.branchClarification,
-        this.branchClarificationOthers,
-        this.branchClarificationRemarks,
-        this.branchHoldCount,
-        this.brokenparts,
-        this.chassisno,
-        this.chassisnoRs,
-        this.contactmobileno,
-        this.contactnoPrimary,
-        this.contactperson,
-        this.contacttoSendlink,
-        this.conveyanceamount,
-        this.currentyearclm,
-        this.currentyearclmremark,
-        this.customerremarks,
-        this.customerHoldCount,
-        this.city,
-        this.completeReportSubmittedeDate,
-        this.currentDate,
-        this.declaration,
-        this.dentedparts,
-        this.delayedCaseFlg,
-        this.district,
-        this.engincover,
-        this.engineno,
-        this.enginenoRs,
-        this.errortype,
-        this.errorToBeMarked,
-        this.extensionRemarks,
-        this.finalstatus,
-        this.fueltype,
-        this.firstName,
-        this.galleryimage,
-        this.gvw,
-        this.gvwRs,
-        this.holdtype,
-        this.hoUserFlag,
-        this.idvvehicle,
-        this.importexcess,
-        this.importexcessdetails,
-        this.inspectionlocation,
-        this.insuredname,
-        this.insurednameRs,
-        this.intermediariesname,
-        this.intimationcreatedby,
-        this.intimationcreateddate,
-        this.intimationcreatorloginid,
-        this.intimationpurpose,
-        this.intimationremarks,
-        this.isforphone,
-        this.imageresponse,
-        this.inspectionLocation1,
-        this.inspectionLocation2,
-        this.insuredPhone,
-        this.isApprovalReasonEnable,
-        this.landmark,
-        this.lastName,
-        this.make,
-        this.makeRs,
-        this.maxnoofHoldAgency,
-        this.maxnoofHoldBranch,
-        this.maxnoofHoldCustomer,
-        this.model,
-        this.modelRs,
-        this.modeofpayment,
-        this.mysgisource,
-        this.middleName,
-        this.ncbPer,
-        this.ncbPercentage,
-        this.noofphotosalert,
-        this.noofphotoscaptured,
-        this.noofphotosrequired,
-        this.odometerreading,
-        this.partyname,
-        this.photoattached,
-        this.pifeesamount,
-        this.pifeescollected,
-        this.pioLogBook,
-        this.pioUserFlag,
-        this.policyno,
-        this.preinspectionid,
-        this.previousby,
-        this.previousstatus,
-        this.productcode,
-        this.productname,
-        this.proposaltype,
-        this.pendingTimeClock,
-        this.pincode,
-        this.policyUrl,
-        this.premiaCode,
-        this.productCategory,
-        this.productCategoryRs,
-        this.rcverified,
-        this.reasoncanrejhold,
-        this.referencenumber,
-        this.refmobileno,
-        this.regNumberFormat,
-        this.remarksifcancelled,
-        this.reworkdone,
-        this.reworkrecommended,
-        this.rootorg,
-        this.remarks,
-        this.reopenRemarks,
-        this.repositoryAlert,
-        this.scratchedparts,
-        this.seatingcapacity,
-        this.seatingcapacityRs,
-        this.sgicpolicyno,
-        this.status,
-        this.statusname,
-        this.surveydate,
-        this.surveydoneby,
-        this.surveydonebyInsured,
-        this.surveyid,
-        this.surveyorid,
-        this.surveyormailid,
-        this.surveyorremark,
-        this.surveyortype,
-        this.surveyorAgencyName,
-        this.surveySubmitDate,
-        this.specialApprovalAlert,
-        this.state,
-        this.surveyBy,
-        this.surveyorDoneFileList,
-        this.surveyorList,
-        this.typeofendor,
-        this.title,
-        this.vehicletype,
-        this.vehicleRegNo,
-        this.vehicleRegNoRs,
-        this.vehCategory,
-        this.vehCategoryRs,
-        this.vehRunningCondition,
-        this.videofileurl,
-        this.yearofmanuf,
-        this.yearofmanufRs,
-        this.claimnotapprovedfor,
-    });
+  Response({
+    this.abandonedreason,
+    this.agencystatus,
+    this.agencyHoldCount,
+    this.agtCategory,
+    this.appointmentinfo,
+    this.approvalreason,
+    this.approvalReqByRemarks,
+    this.approvedby,
+    this.attachmentid,
+    this.auditfeedback,
+    this.auditremarks,
+    this.auditstatus,
+    this.adjustedApprovedDate,
+    this.approveddate,
+    this.branchid,
+    this.branchname,
+    this.branchClarification,
+    this.branchClarificationOthers,
+    this.branchClarificationRemarks,
+    this.branchHoldCount,
+    this.brokenparts,
+    this.chassisno,
+    this.chassisnoRs,
+    this.contactmobileno,
+    this.contactnoPrimary,
+    this.contactperson,
+    this.contacttoSendlink,
+    this.conveyanceamount,
+    this.currentyearclm,
+    this.currentyearclmremark,
+    this.customerremarks,
+    this.customerHoldCount,
+    this.city,
+    this.completeReportSubmittedeDate,
+    this.currentDate,
+    this.declaration,
+    this.dentedparts,
+    this.delayedCaseFlg,
+    this.district,
+    this.engincover,
+    this.engineno,
+    this.enginenoRs,
+    this.errortype,
+    this.errorToBeMarked,
+    this.extensionRemarks,
+    this.finalstatus,
+    this.fueltype,
+    this.firstName,
+    this.galleryimage,
+    this.gvw,
+    this.gvwRs,
+    this.holdtype,
+    this.hoUserFlag,
+    this.idvvehicle,
+    this.importexcess,
+    this.importexcessdetails,
+    this.inspectionlocation,
+    this.insuredname,
+    this.insurednameRs,
+    this.intermediariesname,
+    this.intimationcreatedby,
+    this.intimationcreateddate,
+    this.intimationcreatorloginid,
+    this.intimationpurpose,
+    this.intimationremarks,
+    this.isforphone,
+    this.imageresponse,
+    this.inspectionLocation1,
+    this.inspectionLocation2,
+    this.insuredPhone,
+    this.isApprovalReasonEnable,
+    this.landmark,
+    this.lastName,
+    this.make,
+    this.makeRs,
+    this.maxnoofHoldAgency,
+    this.maxnoofHoldBranch,
+    this.maxnoofHoldCustomer,
+    this.model,
+    this.modelRs,
+    this.modeofpayment,
+    this.mysgisource,
+    this.middleName,
+    this.ncbPer,
+    this.ncbPercentage,
+    this.noofphotosalert,
+    this.noofphotoscaptured,
+    this.noofphotosrequired,
+    this.odometerreading,
+    this.partyname,
+    this.photoattached,
+    this.pifeesamount,
+    this.pifeescollected,
+    this.pioLogBook,
+    this.pioUserFlag,
+    this.policyno,
+    this.preinspectionid,
+    this.previousby,
+    this.previousstatus,
+    this.productcode,
+    this.productname,
+    this.proposaltype,
+    this.pendingTimeClock,
+    this.pincode,
+    this.policyUrl,
+    this.premiaCode,
+    this.productCategory,
+    this.productCategoryRs,
+    this.rcverified,
+    this.reasoncanrejhold,
+    this.referencenumber,
+    this.refmobileno,
+    this.regNumberFormat,
+    this.remarksifcancelled,
+    this.reworkdone,
+    this.reworkrecommended,
+    this.rootorg,
+    this.remarks,
+    this.reopenRemarks,
+    this.repositoryAlert,
+    this.scratchedparts,
+    this.seatingcapacity,
+    this.seatingcapacityRs,
+    this.sgicpolicyno,
+    this.status,
+    this.statusname,
+    this.surveydate,
+    this.surveydoneby,
+    this.surveydonebyInsured,
+    this.surveyid,
+    this.surveyorid,
+    this.surveyormailid,
+    this.surveyorremark,
+    this.surveyortype,
+    this.surveyorAgencyName,
+    this.surveySubmitDate,
+    this.specialApprovalAlert,
+    this.state,
+    this.surveyBy,
+    this.surveyorDoneFileList,
+    this.surveyorList,
+    this.typeofendor,
+    this.title,
+    this.vehicletype,
+    this.vehicleRegNo,
+    this.vehicleRegNoRs,
+    this.vehCategory,
+    this.vehCategoryRs,
+    this.vehRunningCondition,
+    this.videofileurl,
+    this.yearofmanuf,
+    this.yearofmanufRs,
+    this.claimnotapprovedfor,
+  });
 
-    factory Response.fromJson(Map<String, dynamic> json) => Response(
+  factory Response.fromJson(Map<String, dynamic> json) => Response(
         abandonedreason: json["ABANDONEDREASON"],
         agencystatus: json["AGENCYSTATUS"],
         agencyHoldCount: json["AGENCY_HOLD_COUNT"],
@@ -420,7 +430,7 @@ class Response {
         gvw: json["GVW"],
         gvwRs: json["GVW_RS"],
         holdtype: json["HOLDTYPE"],
-        hoUserFlag: json["HO_USER_FLAG"],
+        hoUserFlag: json["HO_USER_FLAG"] ?? "",
         idvvehicle: json["IDVVEHICLE"],
         importexcess: json["IMPORTEXCESS"],
         importexcessdetails: json["IMPORTEXCESSDETAILS"],
@@ -434,7 +444,10 @@ class Response {
         intimationpurpose: json["INTIMATIONPURPOSE"],
         intimationremarks: json["INTIMATIONREMARKS"],
         isforphone: json["ISFORPHONE"],
-        imageresponse: json["Imageresponse"] == null ? [] : List<Imageresponse>.from(json["Imageresponse"]!.map((x) => Imageresponse.fromJson(x))),
+        imageresponse: json["Imageresponse"] == null
+            ? []
+            : List<Imageresponse>.from(
+                json["Imageresponse"]!.map((x) => Imageresponse.fromJson(x))),
         inspectionLocation1: json["Inspection_Location1"],
         inspectionLocation2: json["Inspection_Location2"],
         insuredPhone: json["Insured_Phone"],
@@ -461,8 +474,8 @@ class Response {
         photoattached: json["PHOTOATTACHED"],
         pifeesamount: json["PIFEESAMOUNT"],
         pifeescollected: json["PIFEESCOLLECTED"],
-        pioLogBook: json["PIOLogBook"],
-        pioUserFlag: json["PIO_USER_FLAG"],
+        pioLogBook: json["PIOLogBook"] ?? "",
+        pioUserFlag: json["PIO_USER_FLAG"] ?? "",
         policyno: json["POLICYNO"],
         preinspectionid: json["PREINSPECTIONID"],
         previousby: json["PREVIOUSBY"],
@@ -486,7 +499,7 @@ class Response {
         reworkrecommended: json["REWORKRECOMMENDED"],
         rootorg: json["ROOTORG"],
         remarks: json["Remarks"],
-        reopenRemarks: json["ReopenRemarks"],
+        reopenRemarks: json["ReopenRemarks"] ?? "",
         repositoryAlert: json["RepositoryAlert"],
         scratchedparts: json["SCRATCHEDPARTS"],
         seatingcapacity: json["SEATINGCAPACITY"],
@@ -502,13 +515,16 @@ class Response {
         surveyormailid: json["SURVEYORMAILID"],
         surveyorremark: json["SURVEYORREMARK"],
         surveyortype: json["SURVEYORTYPE"],
-        surveyorAgencyName: surveyorAgencyNameValues.map[json["SURVEYOR_AGENCY_NAME"]]!,
+        surveyorAgencyName: json["SURVEYOR_AGENCY_NAME"],
         surveySubmitDate: json["SURVEY_SUBMIT_DATE"],
-        specialApprovalAlert: json["SpecialApprovalAlert"],
+        specialApprovalAlert: json["SpecialApprovalAlert"] ?? "",
         state: json["State"],
-        surveyBy: json["SurveyBy"],
-        surveyorDoneFileList: json["SurveyorDoneFileList"],
-        surveyorList: json["SurveyorList"] == null ? [] : List<SurveyorList>.from(json["SurveyorList"]!.map((x) => SurveyorList.fromJson(x))),
+        surveyBy: json["SurveyBy"] ?? "",
+        surveyorDoneFileList: json["SurveyorDoneFileList"] ?? [],
+        surveyorList: json["SurveyorList"] == null
+            ? []
+            : List<SurveyorList>.from(
+                json["SurveyorList"]!.map((x) => SurveyorList.fromJson(x))),
         typeofendor: json["TYPEOFENDOR"],
         title: json["Title"],
         vehicletype: json["VEHICLETYPE"],
@@ -521,9 +537,9 @@ class Response {
         yearofmanuf: json["YEAROFMANUF"],
         yearofmanufRs: json["YEAROFMANUF_RS"],
         claimnotapprovedfor: json["claimnotapprovedfor"],
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "ABANDONEDREASON": abandonedreason,
         "AGENCYSTATUS": agencystatus,
         "AGENCY_HOLD_COUNT": agencyHoldCount,
@@ -576,7 +592,7 @@ class Response {
         "GVW": gvw,
         "GVW_RS": gvwRs,
         "HOLDTYPE": holdtype,
-        "HO_USER_FLAG": hoUserFlag,
+        "HO_USER_FLAG": hoUserFlag ?? "",
         "IDVVEHICLE": idvvehicle,
         "IMPORTEXCESS": importexcess,
         "IMPORTEXCESSDETAILS": importexcessdetails,
@@ -590,7 +606,9 @@ class Response {
         "INTIMATIONPURPOSE": intimationpurpose,
         "INTIMATIONREMARKS": intimationremarks,
         "ISFORPHONE": isforphone,
-        "Imageresponse": imageresponse == null ? [] : List<dynamic>.from(imageresponse!.map((x) => x.toJson())),
+        "Imageresponse": imageresponse == null
+            ? []
+            : List<dynamic>.from(imageresponse!.map((x) => x.toJson())),
         "Inspection_Location1": inspectionLocation1,
         "Inspection_Location2": inspectionLocation2,
         "Insured_Phone": insuredPhone,
@@ -617,8 +635,8 @@ class Response {
         "PHOTOATTACHED": photoattached,
         "PIFEESAMOUNT": pifeesamount,
         "PIFEESCOLLECTED": pifeescollected,
-        "PIOLogBook": pioLogBook,
-        "PIO_USER_FLAG": pioUserFlag,
+        "PIOLogBook": pioLogBook ?? "",
+        "PIO_USER_FLAG": pioUserFlag ?? "",
         "POLICYNO": policyno,
         "PREINSPECTIONID": preinspectionid,
         "PREVIOUSBY": previousby,
@@ -642,7 +660,7 @@ class Response {
         "REWORKRECOMMENDED": reworkrecommended,
         "ROOTORG": rootorg,
         "Remarks": remarks,
-        "ReopenRemarks": reopenRemarks,
+        "ReopenRemarks": reopenRemarks ?? "",
         "RepositoryAlert": repositoryAlert,
         "SCRATCHEDPARTS": scratchedparts,
         "SEATINGCAPACITY": seatingcapacity,
@@ -658,13 +676,16 @@ class Response {
         "SURVEYORMAILID": surveyormailid,
         "SURVEYORREMARK": surveyorremark,
         "SURVEYORTYPE": surveyortype,
-        "SURVEYOR_AGENCY_NAME": surveyorAgencyNameValues.reverse[surveyorAgencyName],
+        "SURVEYOR_AGENCY_NAME":
+            surveyorAgencyNameValues.reverse[surveyorAgencyName],
         "SURVEY_SUBMIT_DATE": surveySubmitDate,
         "SpecialApprovalAlert": specialApprovalAlert,
         "State": state,
-        "SurveyBy": surveyBy,
-        "SurveyorDoneFileList": surveyorDoneFileList,
-        "SurveyorList": surveyorList == null ? [] : List<dynamic>.from(surveyorList!.map((x) => x.toJson())),
+        "SurveyBy": surveyBy ?? "",
+        "SurveyorDoneFileList": surveyorDoneFileList ?? [],
+        "SurveyorList": surveyorList == null
+            ? []
+            : List<dynamic>.from(surveyorList!.map((x) => x.toJson())),
         "TYPEOFENDOR": typeofendor,
         "Title": title,
         "VEHICLETYPE": vehicletype,
@@ -677,45 +698,45 @@ class Response {
         "YEAROFMANUF": yearofmanuf,
         "YEAROFMANUF_RS": yearofmanufRs,
         "claimnotapprovedfor": claimnotapprovedfor,
-    };
+      };
 }
 
 class Imageresponse {
-    String? active;
-    String? applicationNo;
-    String? deletedby;
-    String? deleteddate;
-    Extension? extension;
-    String? fileName;
-    String? fileUniqueName;
-    String? tagId;
-    String? tagName;
-    SurveyorAgencyName? uploadedby;
-    String? uploadeddate;
-    String? uploadfilemasterid;
-    Uploadfrom? uploadfrom;
-    String? xbizid;
-    String? xbizurl;
+  String? active;
+  String? applicationNo;
+  String? deletedby;
+  String? deleteddate;
+  Extension? extension;
+  String? fileName;
+  String? fileUniqueName;
+  String? tagId;
+  String? tagName;
+  SurveyorAgencyName? uploadedby;
+  String? uploadeddate;
+  String? uploadfilemasterid;
+  Uploadfrom? uploadfrom;
+  String? xbizid;
+  String? xbizurl;
 
-    Imageresponse({
-        this.active,
-        this.applicationNo,
-        this.deletedby,
-        this.deleteddate,
-        this.extension,
-        this.fileName,
-        this.fileUniqueName,
-        this.tagId,
-        this.tagName,
-        this.uploadedby,
-        this.uploadeddate,
-        this.uploadfilemasterid,
-        this.uploadfrom,
-        this.xbizid,
-        this.xbizurl,
-    });
+  Imageresponse({
+    this.active,
+    this.applicationNo,
+    this.deletedby,
+    this.deleteddate,
+    this.extension,
+    this.fileName,
+    this.fileUniqueName,
+    this.tagId,
+    this.tagName,
+    this.uploadedby,
+    this.uploadeddate,
+    this.uploadfilemasterid,
+    this.uploadfrom,
+    this.xbizid,
+    this.xbizurl,
+  });
 
-    factory Imageresponse.fromJson(Map<String, dynamic> json) => Imageresponse(
+  factory Imageresponse.fromJson(Map<String, dynamic> json) => Imageresponse(
         active: json["ACTIVE"],
         applicationNo: json["ApplicationNo"],
         deletedby: json["DELETEDBY"],
@@ -731,9 +752,9 @@ class Imageresponse {
         uploadfrom: uploadfromValues.map[json["UPLOADFROM"]]!,
         xbizid: json["XBIZID"],
         xbizurl: json["XBIZURL"],
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "ACTIVE": active,
         "ApplicationNo": applicationNo,
         "DELETEDBY": deletedby,
@@ -749,79 +770,65 @@ class Imageresponse {
         "UPLOADFROM": uploadfromValues.reverse[uploadfrom],
         "XBIZID": xbizid,
         "XBIZURL": xbizurl,
-    };
+      };
 }
 
-enum Extension {
-    JPG,
-    MP4,
-    PNG
-}
+enum Extension { JPG, MP4, PNG }
 
-final extensionValues = EnumValues({
-    ".jpg": Extension.JPG,
-    ".mp4": Extension.MP4,
-    ".png": Extension.PNG
-});
+final extensionValues = EnumValues(
+    {".jpg": Extension.JPG, ".mp4": Extension.MP4, ".png": Extension.PNG});
 
-enum SurveyorAgencyName {
-    EMPTY,
-    SHRIGEN_UAT
-}
+enum SurveyorAgencyName { EMPTY, SHRIGEN_UAT }
 
 final surveyorAgencyNameValues = EnumValues({
-    "": SurveyorAgencyName.EMPTY,
-    "SHRIGEN UAT": SurveyorAgencyName.SHRIGEN_UAT
+  "": SurveyorAgencyName.EMPTY,
+  "SHRIGEN UAT": SurveyorAgencyName.SHRIGEN_UAT
 });
 
-enum Uploadfrom {
-    PI
-}
+enum Uploadfrom { PI }
 
-final uploadfromValues = EnumValues({
-    "PI": Uploadfrom.PI
-});
+final uploadfromValues = EnumValues({"PI": Uploadfrom.PI});
 
 class SurveyorList {
-    String? surveyorDoneBy;
-    int? surveyorId;
-    SurveyorAgencyName? surveyorName;
-    String? surveyorPartyId;
-    String? surveyorType;
+  String? surveyorDoneBy;
+  int? surveyorId;
+  String? surveyorName;
+  String? surveyorPartyId;
+  String? surveyorType;
 
-    SurveyorList({
-        this.surveyorDoneBy,
-        this.surveyorId,
-        this.surveyorName,
-        this.surveyorPartyId,
-        this.surveyorType,
-    });
+  SurveyorList({
+    this.surveyorDoneBy,
+    this.surveyorId,
+    this.surveyorName,
+    this.surveyorPartyId,
+    this.surveyorType,
+  });
 
-    factory SurveyorList.fromJson(Map<String, dynamic> json) => SurveyorList(
+  factory SurveyorList.fromJson(Map<String, dynamic> json) => SurveyorList(
         surveyorDoneBy: json["SurveyorDoneBy"],
         surveyorId: json["SurveyorId"],
-        surveyorName: surveyorAgencyNameValues.map[json["SurveyorName"]]!,
+        surveyorName: json["SurveyorName"],
         surveyorPartyId: json["SurveyorPartyId"],
         surveyorType: json["SurveyorType"],
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "SurveyorDoneBy": surveyorDoneBy,
         "SurveyorId": surveyorId,
         "SurveyorName": surveyorAgencyNameValues.reverse[surveyorName],
         "SurveyorPartyId": surveyorPartyId,
         "SurveyorType": surveyorType,
-    };
+      };
 }
 
 class EnumValues<T> {
-    Map<String, T> map;
-    late Map<T, String> reverseMap;
+  Map<String, T> map;
+  late Map<T, String> reverseMap;
 
-    EnumValues(this.map);
+  EnumValues(this.map);
 
-    Map<T, String> get reverse {
-            reverseMap = map.map((k, v) => MapEntry(v, k));
-            return reverseMap;
-    }
+  Map<T, String> get reverse {
+    reverseMap = map.map((k, v) => MapEntry(v, k));
+    return reverseMap;
+  }
 }
