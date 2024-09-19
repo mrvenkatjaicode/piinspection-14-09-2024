@@ -410,6 +410,13 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
                                         commonStrings[tabController!.index]!
                                                 .item2 ??
                                             "",
+                                        errorBuilder: (BuildContext context,
+                                            Object exception,
+                                            StackTrace? stackTrace) {
+                                          return const Center(
+                                            child: Text("Image Not Found"),
+                                          );
+                                        },
                                         width:
                                             MediaQuery.of(context).size.width *
                                                 3.5,
