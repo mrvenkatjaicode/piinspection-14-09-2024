@@ -93,7 +93,7 @@ class PreInspectionBloc extends Bloc<PreInspectionEvent, PreInspectionState> {
             }
           }
         }
-        tabdetails.add("VIDEO RECORDING");
+        tabdetails.add("VIDEO RECORDING: ");
         for (int j = 0; j < defaultvehicleimages.length; j++) {
           if (defaultvehicleimages[j].item1.toString() == "SIGNATURE") {
             for (int i = 0; i < resModel.response!.length; i++) {
@@ -262,7 +262,8 @@ class PreInspectionBloc extends Bloc<PreInspectionEvent, PreInspectionState> {
         var resModel = shrigenUploadFileResponseFromJson(res.resBody);
         resModel.docFileUploadDetails![0].xbizurl;
         emit(ShrigenUploadApiState(
-            imageURl: resModel.docFileUploadDetails![0].xbizurl ?? ""));
+            imageURl: resModel.docFileUploadDetails![0].xbizurl ?? "",
+            extension: resModel.docFileUploadDetails![0].extension ?? ""));
       } else {
         emit(const PreInspectionFailureState("Request Failed!"));
       }

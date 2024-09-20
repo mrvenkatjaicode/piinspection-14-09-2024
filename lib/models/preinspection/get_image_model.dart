@@ -706,7 +706,7 @@ class Imageresponse {
   String? applicationNo;
   String? deletedby;
   String? deleteddate;
-  Extension? extension;
+  String? extension;
   String? fileName;
   String? fileUniqueName;
   String? tagId;
@@ -741,7 +741,7 @@ class Imageresponse {
         applicationNo: json["ApplicationNo"],
         deletedby: json["DELETEDBY"],
         deleteddate: json["DELETEDDATE"],
-        extension: extensionValues.map[json["Extension"]]!,
+        extension: json["Extension"],
         fileName: json["FileName"],
         fileUniqueName: json["FileUniqueName"],
         tagId: json["TagId"],
@@ -759,7 +759,7 @@ class Imageresponse {
         "ApplicationNo": applicationNo,
         "DELETEDBY": deletedby,
         "DELETEDDATE": deleteddate,
-        "Extension": extensionValues.reverse[extension],
+        "Extension": extension,
         "FileName": fileName,
         "FileUniqueName": fileUniqueName,
         "TagId": tagId,

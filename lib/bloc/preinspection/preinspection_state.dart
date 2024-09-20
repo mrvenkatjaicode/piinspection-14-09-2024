@@ -46,8 +46,9 @@ class PreInspectionFailureState extends PreInspectionState {
 
 class ShrigenUploadApiState extends PreInspectionState {
   final String imageURl;
+  final String extension;
 
-  const ShrigenUploadApiState({required this.imageURl});
+  const ShrigenUploadApiState({required this.imageURl, required this.extension});
 }
 
 class NoFilePicked extends PreInspectionState {}

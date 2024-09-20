@@ -24,6 +24,8 @@ class PreInspectionScreen extends StatefulWidget {
 class _PreInspectionScreenState extends State<PreInspectionScreen>
     with TickerProviderStateMixin {
   static List<String> tabDetails = [];
+  static List<Tuple2<String?, String?>?> morelist = [];
+
   static PageController pageController = PageController(initialPage: 0);
   static TabController? tabController;
   String? tabName;
@@ -32,6 +34,196 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
   List<Tuple2<String?, String?>?> tabNameList = [];
 
   List<Tuple2<String?, String?>?> commonStrings = [];
+
+  Widget _buildMoreContent(String data, bool existsInTabData) {
+    if (commonStrings.isNotEmpty &&
+        existsInTabData &&
+        commonStrings.length > tabController!.index) {
+      print("object");
+    }
+    return morelist.isEmpty
+        ? Image.memory(
+            base64Decode(data),
+            width: MediaQuery.of(context).size.width * 3.5,
+            height: MediaQuery.of(context).size.height / 2,
+          )
+        : Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: morelist.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: null,
+                  leading: morelist[index]!.item2 == "pdf"
+                      ? const Icon(Icons.picture_as_pdf)
+                      : Image.network(
+                          morelist[index]!.item1 ?? "",
+                          fit: BoxFit.fill,
+                          errorBuilder: (BuildContext context, Object exception,
+                              StackTrace? stackTrace) {
+                            return const Center(
+                              child: Text("Image Not Found"),
+                            );
+                          },
+                        ),
+                );
+              },
+            ),
+          );
+  }
+
+  Widget _buildVideoRecordingContent() {
+    return Image.asset(
+      'assest/addvideo.png',
+      width: MediaQuery.of(context).size.width * 1.5,
+      height: MediaQuery.of(context).size.height,
+      fit: BoxFit.contain,
+    );
+  }
+
+  Widget _buildSignatureContent(String data) {
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10.0),
+            child: Text(
+              'Declaration: \n I/we hereby declare that I have carried out inspection of the proposed vehicle in the presence of proposer / authorized representative; attached images, videos, data, reports belong to current date/time and there is no manipulation in the vehicle detail.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'Poppins',
+                decoration: TextDecoration.underline,
+                fontSize: 14,
+                letterSpacing: 1,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          const Text(
+            "Insured Signature",
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              decoration: TextDecoration.underline,
+              fontSize: 14,
+              letterSpacing: 1,
+              fontWeight: FontWeight.w600,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          _buildSignatureSection(data, "Add Sign"),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: Divider(
+              thickness: 1,
+              color: Colors.black.withOpacity(.40),
+            ),
+          ),
+          const Text(
+            "Agent/Broker/Executive Signature",
+            style: TextStyle(
+              fontFamily: 'Poppins',
+              decoration: TextDecoration.underline,
+              fontSize: 14,
+              letterSpacing: 1,
+              fontWeight: FontWeight.w600,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          _buildSignatureSection(data, "Add Sign"),
+          const SizedBox(height: 100),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSignatureSection(String data, String buttonText) {
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Image.memory(
+            base64Decode(data),
+            width: MediaQuery.of(context).size.width * 3.5,
+            height: MediaQuery.of(context).size.height / 5,
+          ),
+        ),
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: ElevatedButton(
+                onPressed: () async {
+                  dynamic signatureImage = await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => SignatureScreen(
+                        title: "Signature",
+                        image64: (signature) {
+                          // Handle signature
+                        },
+                      ),
+                    ),
+                  );
+                  if (signatureImage != null) {
+                    // Handle the returned signature image
+                  }
+                },
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.add_sharp,
+                      color: Colors.black,
+                      size: 30,
+                    ),
+                    Text(buttonText),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDefaultContent(int itemIndex, bool existsInTabData) {
+    if (commonStrings.isNotEmpty &&
+        existsInTabData &&
+        commonStrings.length > tabController!.index) {
+      return _buildImageFromNetwork(
+          commonStrings[tabController!.index]!.item2 ?? "");
+    } else if (isImageUploaded.isNotEmpty &&
+        isImageUploaded[tabController!.index]) {
+      return _buildImageFromNetwork(imageUrl[tabController!.index]);
+    } else {
+      return Image.memory(
+        base64Decode(tabDetails[itemIndex].split(":")[1]),
+        width: MediaQuery.of(context).size.width * 3.5,
+        height: MediaQuery.of(context).size.height / 2,
+      );
+    }
+  }
+
+  Widget _buildImageFromNetwork(String url) {
+    return Image.network(
+      url,
+      width: MediaQuery.of(context).size.width * 3.5,
+      height: MediaQuery.of(context).size.height / 2,
+      fit: BoxFit.fill,
+      errorBuilder:
+          (BuildContext context, Object exception, StackTrace? stackTrace) {
+        return const Center(
+          child: Text("Image Not Found"),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +252,14 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
                 state.getImageResponse.response![0].imageresponse![i].tagName!,
                 state
                     .getImageResponse.response![0].imageresponse![i].xbizurl!));
+            if (state
+                    .getImageResponse.response![0].imageresponse![i].tagName! ==
+                "MORE") {
+              morelist.add(Tuple2(
+                  state.getImageResponse.response![0].imageresponse![i].xbizurl,
+                  state.getImageResponse.response![0].imageresponse![i]
+                      .extension!));
+            } /*  else {} */
           }
           // for (var tabTuple in tabNameList) {
           //   if (apiName.contains(str)) {
@@ -96,7 +296,9 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
         } else if (state is ShrigenUploadApiState) {
           debugPrint(state.imageURl);
           isImageUploaded[tabController!.index] = true;
-          imageUrl[tabController!.index] = state.imageURl;
+          tabName == "MORE"
+              ? morelist.add(Tuple2(state.imageURl, state.extension))
+              : imageUrl[tabController!.index] = state.imageURl;
         } else if (state is FileUploadedSuccessfully) {
           debugPrint("FileUploadedSuccessfully");
           context.read<PreInspectionBloc>().add(ShrigenUploadApiEvent(
@@ -139,6 +341,7 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
         }
       }, builder: (context, state) {
         if (state is PreInspectionInitialState) {
+          morelist = [];
           context.read<PreInspectionBloc>().add(GetImageFromApiEvent());
           debugPrint("Init");
         }
@@ -202,258 +405,310 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
                   SizedBox(
                     height: MediaQuery.of(context).size.height / 1.23,
                     child: PageView.builder(
-                      itemCount: tabDetails.length,
-                      controller: pageController,
-                      onPageChanged: (value) {
-                        context.read<PreInspectionBloc>().add(
-                            UpdateTabIndexEvent(
-                                value, tabDetails[value].split(":")[0]));
-                      },
-                      itemBuilder: (BuildContext context, int itemIndex) {
-                        bool existsInTabData = tabNameList.any((tuple) =>
-                            tuple != null &&
-                            tuple.item1 == tabDetails[itemIndex].split(":")[0]);
+                        itemCount: tabDetails.length,
+                        controller: pageController,
+                        onPageChanged: (value) {
+                          context.read<PreInspectionBloc>().add(
+                              UpdateTabIndexEvent(
+                                  value, tabDetails[value].split(":")[0]));
+                        },
+                        itemBuilder: (BuildContext context, int itemIndex) {
+                          final String type =
+                              tabDetails[itemIndex].split(":")[0];
+                          final String data =
+                              tabDetails[itemIndex].split(":")[1];
+                          bool existsInTabData = tabNameList.any((tuple) =>
+                              tuple != null &&
+                              tuple.item1 ==
+                                  tabDetails[itemIndex].split(":")[0]);
 
-                        return tabDetails[itemIndex].split(":")[0] ==
-                                "VIDEO RECORDING"
-                            ? Image.asset(
-                                'assest/addvideo.png',
-                                width: MediaQuery.of(context).size.width * 1.5,
-                                height: MediaQuery.of(context).size.height,
-                                fit: BoxFit.contain,
-                              )
-                            : tabDetails[itemIndex].split(":")[0] == "SIGNATURE"
-                                ? SingleChildScrollView(
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        const Padding(
-                                          padding: EdgeInsets.only(
-                                              left: 10.0, right: 10),
-                                          child: Text(
-                                            'Declaration: \n I/we hereby declare that I have carried out inspection of the proposed vehicle in the presence of proposer / authorized representative; attached images, videos, data, reports belong to current date/time and there is no manipulation in the vehicle detail.',
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                fontFamily: 'Poppins',
-                                                decoration:
-                                                    TextDecoration.underline,
-                                                fontSize: 14,
-                                                letterSpacing: 1,
-                                                fontWeight: FontWeight.w600),
-                                          ),
-                                        ),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        const Text(
-                                          "Insured Signature",
-                                          style: TextStyle(
-                                              fontFamily: 'Poppins',
-                                              decoration:
-                                                  TextDecoration.underline,
-                                              fontSize: 14,
-                                              letterSpacing: 1,
-                                              fontWeight: FontWeight.w600),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        Column(
-                                          mainAxisSize: MainAxisSize.max,
+                          switch (type) {
+                            case "MORE":
+                              return _buildMoreContent(data, existsInTabData);
+                            case "VIDEO RECORDING":
+                              return _buildVideoRecordingContent();
+                            case "SIGNATURE":
+                              return _buildSignatureContent(data);
+                            default:
+                              return _buildDefaultContent(
+                                  itemIndex, existsInTabData);
+                          }
+                        }
+
+                        /*  return tabDetails[itemIndex].split(":")[0] == "MORE"
+                            ? morelist.isEmpty
+                                ? Image.memory(
+                                    base64Decode(
+                                        tabDetails[itemIndex].split(":")[1]),
+                                    width:
+                                        MediaQuery.of(context).size.width * 3.5,
+                                    height:
+                                        MediaQuery.of(context).size.height / 2,
+                                  )
+                                : Container()
+                            : tabDetails[itemIndex].split(":")[0] ==
+                                    "VIDEO RECORDING"
+                                ? Image.asset(
+                                    'assest/addvideo.png',
+                                    width:
+                                        MediaQuery.of(context).size.width * 1.5,
+                                    height: MediaQuery.of(context).size.height,
+                                    fit: BoxFit.contain,
+                                  )
+                                : tabDetails[itemIndex].split(":")[0] ==
+                                        "SIGNATURE"
+                                    ? SingleChildScrollView(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
                                           children: [
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.all(15.0),
-                                              child: Image.memory(
-                                                base64Decode(
-                                                    tabDetails[itemIndex]
-                                                        .split(":")[1]),
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    3.5,
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .height /
-                                                    5,
+                                            const Padding(
+                                              padding: EdgeInsets.only(
+                                                  left: 10.0, right: 10),
+                                              child: Text(
+                                                'Declaration: \n I/we hereby declare that I have carried out inspection of the proposed vehicle in the presence of proposer / authorized representative; attached images, videos, data, reports belong to current date/time and there is no manipulation in the vehicle detail.',
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    fontFamily: 'Poppins',
+                                                    decoration: TextDecoration
+                                                        .underline,
+                                                    fontSize: 14,
+                                                    letterSpacing: 1,
+                                                    fontWeight:
+                                                        FontWeight.w600),
                                               ),
                                             ),
-                                            Row(
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            const Text(
+                                              "Insured Signature",
+                                              style: TextStyle(
+                                                  fontFamily: 'Poppins',
+                                                  decoration:
+                                                      TextDecoration.underline,
+                                                  fontSize: 14,
+                                                  letterSpacing: 1,
+                                                  fontWeight: FontWeight.w600),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            Column(
                                               mainAxisSize: MainAxisSize.max,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end,
                                               children: [
                                                 Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          left: 10.0,
-                                                          right: 10),
-                                                  child: ElevatedButton(
-                                                      onPressed: () async {
-                                                        // Open Signature Screen and wait for the result
-                                                        dynamic signatureImage =
-                                                            await Navigator
-                                                                .push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                SignatureScreen(
-                                                              title:
-                                                                  "Signature",
-                                                              image64:
-                                                                  (signature) {
-                                                                print(
-                                                                    "Signature captured!");
-                                                              },
-                                                            ),
-                                                          ),
-                                                        );
-
-                                                        if (signatureImage !=
-                                                            null) {
-                                                          // Handle the returned signature image
-                                                          print(
-                                                              "Signature received!");
-                                                          // You can now use the signatureImage, e.g., display it or send to an API.
-                                                        }
-                                                      },
-                                                      child: const Row(
-                                                        children: [
-                                                          Icon(
-                                                            Icons.add_sharp,
-                                                            color: Colors.black,
-                                                            size: 30,
-                                                          ),
-                                                          Text("Add Sign")
-                                                        ],
-                                                      )),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 10.0, right: 10),
-                                          child: Divider(
-                                            thickness: 1,
-                                            color:
-                                                Colors.black.withOpacity(.40),
-                                          ),
-                                        ),
-                                        const Text(
-                                          "Agent/Broker/Excutive Signature",
-                                          style: TextStyle(
-                                              fontFamily: 'Poppins',
-                                              decoration:
-                                                  TextDecoration.underline,
-                                              fontSize: 14,
-                                              letterSpacing: 1,
-                                              fontWeight: FontWeight.w600),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        Column(
-                                          mainAxisSize: MainAxisSize.max,
-                                          children: [
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.all(15.0),
-                                              child: Image.memory(
-                                                base64Decode(
-                                                    tabDetails[itemIndex]
-                                                        .split(":")[1]),
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    3.5,
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .height /
-                                                    5,
-                                              ),
-                                            ),
-                                            Row(
-                                              mainAxisSize: MainAxisSize.max,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end,
-                                              children: [
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          left: 10.0,
-                                                          right: 10),
-                                                  child: ElevatedButton(
-                                                    onPressed: () {},
-                                                    child: const Row(children: [
-                                                      Icon(
-                                                        Icons.add_sharp,
-                                                        color: Colors.black,
-                                                        size: 30,
-                                                      ),
-                                                      Text("Add Sign")
-                                                    ]),
+                                                  padding: const EdgeInsets.all(
+                                                      15.0),
+                                                  child: Image.memory(
+                                                    base64Decode(
+                                                        tabDetails[itemIndex]
+                                                            .split(":")[1]),
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            3.5,
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height /
+                                                            5,
                                                   ),
                                                 ),
+                                                Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  children: [
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 10.0,
+                                                              right: 10),
+                                                      child: ElevatedButton(
+                                                          onPressed: () async {
+                                                            // Open Signature Screen and wait for the result
+                                                            dynamic
+                                                                signatureImage =
+                                                                await Navigator
+                                                                    .push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        SignatureScreen(
+                                                                  title:
+                                                                      "Signature",
+                                                                  image64:
+                                                                      (signature) {
+                                                                    print(
+                                                                        "Signature captured!");
+                                                                  },
+                                                                ),
+                                                              ),
+                                                            );
+
+                                                            if (signatureImage !=
+                                                                null) {
+                                                              // Handle the returned signature image
+                                                              print(
+                                                                  "Signature received!");
+                                                              // You can now use the signatureImage, e.g., display it or send to an API.
+                                                            }
+                                                          },
+                                                          child: const Row(
+                                                            children: [
+                                                              Icon(
+                                                                Icons.add_sharp,
+                                                                color: Colors
+                                                                    .black,
+                                                                size: 30,
+                                                              ),
+                                                              Text("Add Sign")
+                                                            ],
+                                                          )),
+                                                    ),
+                                                  ],
+                                                ),
                                               ],
                                             ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 10.0, right: 10),
+                                              child: Divider(
+                                                thickness: 1,
+                                                color: Colors.black
+                                                    .withOpacity(.40),
+                                              ),
+                                            ),
+                                            const Text(
+                                              "Agent/Broker/Excutive Signature",
+                                              style: TextStyle(
+                                                  fontFamily: 'Poppins',
+                                                  decoration:
+                                                      TextDecoration.underline,
+                                                  fontSize: 14,
+                                                  letterSpacing: 1,
+                                                  fontWeight: FontWeight.w600),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                            Column(
+                                              mainAxisSize: MainAxisSize.max,
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      15.0),
+                                                  child: Image.memory(
+                                                    base64Decode(
+                                                        tabDetails[itemIndex]
+                                                            .split(":")[1]),
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            3.5,
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height /
+                                                            5,
+                                                  ),
+                                                ),
+                                                Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.max,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  children: [
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 10.0,
+                                                              right: 10),
+                                                      child: ElevatedButton(
+                                                        onPressed: () {},
+                                                        child: const Row(
+                                                            children: [
+                                                              Icon(
+                                                                Icons.add_sharp,
+                                                                color: Colors
+                                                                    .black,
+                                                                size: 30,
+                                                              ),
+                                                              Text("Add Sign")
+                                                            ]),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                            const SizedBox(
+                                              height: 100,
+                                            )
                                           ],
                                         ),
-                                        const SizedBox(
-                                          height: 100,
-                                        )
-                                      ],
-                                    ),
-                                  )
-                                : commonStrings.isNotEmpty &&
-                                        existsInTabData &&
-                                        commonStrings.length >
-                                            tabController!.index
-                                    ? Image.network(
-                                        commonStrings[tabController!.index]!
-                                                .item2 ??
-                                            "",
-                                        errorBuilder: (BuildContext context,
-                                            Object exception,
-                                            StackTrace? stackTrace) {
-                                          return const Center(
-                                            child: Text("Image Not Found"),
-                                          );
-                                        },
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                3.5,
-                                        height:
-                                            MediaQuery.of(context).size.height /
-                                                2,
-                                        fit: BoxFit.fill,
                                       )
-                                    : isImageUploaded.isEmpty
-                                        ? null
-                                        : isImageUploaded[tabController!.index]
-                                            ? Image.network(
-                                                imageUrl[tabController!.index],
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    3.5,
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .height /
-                                                    2,
-                                              )
-                                            : Image.memory(
-                                                base64Decode(
-                                                    tabDetails[itemIndex]
-                                                        .split(":")[1]),
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    3.5,
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .height /
-                                                    2,
+                                    : commonStrings.isNotEmpty &&
+                                            existsInTabData &&
+                                            commonStrings.length >
+                                                tabController!.index
+                                        ? Image.network(
+                                            commonStrings[tabController!.index]!
+                                                    .item2 ??
+                                                "",
+                                            errorBuilder: (BuildContext context,
+                                                Object exception,
+                                                StackTrace? stackTrace) {
+                                              return const Center(
+                                                child: Text("Image Not Found"),
                                               );
-                      },
-                    ),
+                                            },
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                3.5,
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height /
+                                                2,
+                                            fit: BoxFit.fill,
+                                          )
+                                        : isImageUploaded.isEmpty
+                                            ? null
+                                            : isImageUploaded[
+                                                    tabController!.index]
+                                                ? Image.network(
+                                                    imageUrl[
+                                                        tabController!.index],
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            3.5,
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height /
+                                                            2,
+                                                  )
+                                                : Image.memory(
+                                                    base64Decode(
+                                                        tabDetails[itemIndex]
+                                                            .split(":")[1]),
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            3.5,
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .height /
+                                                            2,
+                                                  ); 
+                      },*/
+                        ),
                   ),
                 ],
               ),

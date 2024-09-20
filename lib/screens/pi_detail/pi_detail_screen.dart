@@ -251,7 +251,8 @@ class _PIDetailScreenState extends State<PIDetailScreen> {
       child: BlocConsumer<PIDetailBloc, PIDetailState>(
           listener: (context, state) async {
         if (state is PIDetailGetApiState) {
-         attachmentId = state.pidetailsresponse.response![0].attachmentid ?? "";
+          attachmentId =
+              state.pidetailsresponse.response![0].attachmentid ?? "";
           branchnametextcontoller.text =
               state.pidetailsresponse.response![0].branchname ?? "";
           surveyornametextcontoller.text = state
@@ -392,9 +393,10 @@ class _PIDetailScreenState extends State<PIDetailScreen> {
               content: Text(
                   state.piDetailSaveResponse.messageResult!.successMessage ??
                       ""),
-              backgroundColor: Colors.red,
+              backgroundColor: Colors.green,
             ),
           );
+          attachmentId = state.piDetailSaveResponse.attachmentId ?? "";
           context.read<PIDetailBloc>().add(PISubmitEvent());
         } else if (state is BranchListLoaded) {
           context.read<PIDetailBloc>().add(ChooseDDValue(
