@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:mnovapi/models/preinspection/delete_api_model.dart';
 
 import '../../models/preinspection/get_image_model.dart';
 
@@ -10,9 +11,48 @@ abstract class PreInspectionState extends Equatable {
   List<Object> get props => [];
 }
 
+class DeleteFileApiState extends PreInspectionState {
+  final DeleteApiResponse deleteApiResponse;
+
+  const DeleteFileApiState({required this.deleteApiResponse});
+}
+
+class FinalSubmitAPIState extends PreInspectionState {
+  final String resMsg;
+
+  const FinalSubmitAPIState({required this.resMsg});
+}
+
+class MoveToDoneState extends PreInspectionState {
+  final bool ismovetodone;
+
+  const MoveToDoneState({required this.ismovetodone});
+}
+
+class FileAlreadyUploadedState extends PreInspectionState {
+  final String uniqueFileName;
+
+  const FileAlreadyUploadedState({required this.uniqueFileName});
+}
+
 class PreInspectionInitialState extends PreInspectionState {}
 
 class PreInspectionLoadingState extends PreInspectionState {}
+
+class VideoRecordedCompletedState extends PreInspectionState {
+  final String videoPath;
+
+  const VideoRecordedCompletedState({required this.videoPath});
+}
+
+class SignCompletedState extends PreInspectionState {
+  final String signature;
+  final String signType;
+
+  const SignCompletedState({required this.signature, required this.signType});
+}
+
+class SignNotSelectedState extends PreInspectionState {}
 
 class PreInspectionImageSuccessState extends PreInspectionState {
   final List<String> tabDetails;
@@ -47,15 +87,17 @@ class PreInspectionFailureState extends PreInspectionState {
 class ShrigenUploadApiState extends PreInspectionState {
   final String imageURl;
   final String extension;
+  final String uniqueFileName;
 
-  const ShrigenUploadApiState({required this.imageURl, required this.extension});
+  const ShrigenUploadApiState(
+      {required this.imageURl,
+      required this.extension,
+      required this.uniqueFileName});
 }
 
 class NoFilePicked extends PreInspectionState {}
 
 class FileUploadInProgress extends PreInspectionState {}
-
-class FileAlreadyUploaded extends PreInspectionState {}
 
 class FileUploadedSuccessfully extends PreInspectionState {
   final String referenceValue;

@@ -16,12 +16,14 @@ class SignatureBloc extends Bloc<SignatureEvent, SignatureState> {
 
   void _onClearSignature(
       ClearSignatureEvent event, Emitter<SignatureState> emit) {
+    emit(SignatureLoadingState());
     control.clear();
     emit(SignatureClearedState());
   }
 
   Future<void> _onSaveSignature(
       SaveSignatureEvent event, Emitter<SignatureState> emit) async {
+    emit(SignatureLoadingState());
     try {
       final ByteData? rawImage = await control.toImage(
         color: Colors.black,

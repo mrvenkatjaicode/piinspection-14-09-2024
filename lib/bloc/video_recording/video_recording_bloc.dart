@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:camera/camera.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mnovapi/bloc/video_recording/video_recording_event.dart';
 import 'package:mnovapi/bloc/video_recording/video_recording_state.dart';
@@ -11,13 +12,15 @@ class VideoBloc extends Bloc<VideoEvent, VideoState> {
   late Timer _timer;
 
   VideoBloc() : super(VideoInitialState()) {
-    on<StartRecordingEvent>(_onStartRecording);
+    on<InitializeCameraEvent>(_onInitializingCamera);
+    on<StartRecordingEvent>(startVideoRecording);
     on<StopRecordingEvent>(_onStopRecording);
     on<ResetRecordingEvent>(_onResetRecording);
   }
 
-  Future<void> _onStartRecording(
-      StartRecordingEvent event, Emitter<VideoState> emit) async {
+  Future<void> _onInitializingCamera(
+      InitializeCameraEvent event, Emitter<VideoState> emit) async {
+    emit(LoadingCameraState());
     if (_cameraController == null) {
       final cameras = await availableCameras();
       _cameraController = CameraController(cameras[0], ResolutionPreset.high);
@@ -27,27 +30,37 @@ class VideoBloc extends Bloc<VideoEvent, VideoState> {
     final directory = await getTemporaryDirectory();
     final videoPath = path.join(directory.path, '${DateTime.now()}.mp4');
 
+    //_cameraController!.startVideoRecording();
+
+    emit(InitializedCameraState(_cameraController!));
+  }
+
+  startVideoRecording(StartRecordingEvent event, Emitter<VideoState> emit) {
+    emit(LoadingCameraState());
     _cameraController!.startVideoRecording();
-
-    emit(VideoRecordingState(_cameraController!));
-
-    _timer = Timer(const Duration(seconds: 60), () {
-      add(StopRecordingEvent());
+    emit(VideoRecordingState(_cameraController!, event.isshowStartRecording));
+    _timer = Timer(const Duration(seconds: 5), () {
+      add(StopRecordingEvent(
+          context: event.context,
+          isshowStartRecording: event.isshowStartRecording));
     });
   }
 
   Future<void> _onStopRecording(
       StopRecordingEvent event, Emitter<VideoState> emit) async {
+    emit(LoadingCameraState());
     if (_cameraController != null &&
         _cameraController!.value.isRecordingVideo) {
       final videoFile = await _cameraController!.stopVideoRecording();
       _timer.cancel();
-      emit(VideoRecordedState(videoFile));
+      Navigator.pop(event.context, videoFile);
+      emit(VideoRecordedState(videoFile, event.isshowStartRecording));
     }
   }
 
   Future<void> _onResetRecording(
       ResetRecordingEvent event, Emitter<VideoState> emit) async {
+    emit(LoadingCameraState());
     emit(VideoInitialState());
   }
 

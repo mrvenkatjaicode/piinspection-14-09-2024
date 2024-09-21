@@ -10,6 +10,8 @@ abstract class SignatureState extends Equatable {
 
 class SignatureInitialState extends SignatureState {}
 
+class SignatureLoadingState extends SignatureState {}
+
 class SignatureClearedState extends SignatureState {}
 
 class SignatureSavedState extends SignatureState {

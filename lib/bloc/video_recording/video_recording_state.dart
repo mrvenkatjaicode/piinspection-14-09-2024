@@ -8,12 +8,24 @@ abstract class VideoState extends Equatable {
   List<Object> get props => [];
 }
 
+class LoadingCameraState extends VideoState {}
+
+class InitializedCameraState extends VideoState {
+  final CameraController controller;
+
+  const InitializedCameraState(this.controller);
+
+  @override
+  List<Object> get props => [controller];
+}
+
 class VideoInitialState extends VideoState {}
 
 class VideoRecordingState extends VideoState {
   final CameraController controller;
+  final bool? isshowStartRecording;
 
-  const VideoRecordingState(this.controller);
+  const VideoRecordingState(this.controller, this.isshowStartRecording);
 
   @override
   List<Object> get props => [controller];
@@ -21,8 +33,8 @@ class VideoRecordingState extends VideoState {
 
 class VideoRecordedState extends VideoState {
   final XFile videoFile;
-
-  const VideoRecordedState(this.videoFile);
+ final bool? isshowStartRecording;
+  const VideoRecordedState(this.videoFile, this.isshowStartRecording);
 
   @override
   List<Object> get props => [videoFile];

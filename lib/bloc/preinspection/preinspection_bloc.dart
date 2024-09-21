@@ -6,6 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:mnovapi/models/preinspection/delete_api_model.dart';
+import 'package:mnovapi/models/preinspection/final_submit_model.dart';
+import 'package:mnovapi/screens/preinspection/video_recording/video_recording_screen.dart';
+import 'package:mnovapi/screens/signature/signature_screen.dart';
 import 'package:mnovapi/utils/constant.dart';
 import 'package:tuple/tuple.dart';
 
@@ -22,6 +26,9 @@ class PreInspectionBloc extends Bloc<PreInspectionEvent, PreInspectionState> {
   final ImagePicker picker = ImagePicker();
   File? imageFile;
   String? base64Image;
+  bool? ismovetodone;
+  String? videoPath;
+  String? signature;
 
   PreInspectionBloc(this.vsync) : super(PreInspectionInitialState()) {
     on<GetPreInspectionImageApiEvent>(getSurveyorDetail);
@@ -33,8 +40,124 @@ class PreInspectionBloc extends Bloc<PreInspectionEvent, PreInspectionState> {
     on<ShrigenUploadApiEvent>(uploadshrigenapi);
     on<SelectDocIdEvent>(getDocId);
     on<GetImageFromApiEvent>(getImageFromApi);
+    on<NavigateToVideoScreenEvent>(navtovideoScreen);
+    on<NavigateToSignScreenEvent>(navigatetoSignScreen);
+    on<MoveToDoneEvent>(movetodone);
+    on<FinalSubmitAPIEvent>(finalSubmitAPI);
+    on<FileAlreadyUploadedEvent>(showAlreadyUploadedDialog);
+    on<DeleteFileApiEvent>(deleteFileApi);
   }
   final TickerProvider vsync;
+
+  showAlreadyUploadedDialog(
+      FileAlreadyUploadedEvent event, Emitter<PreInspectionState> emit) {
+    emit(PreInspectionLoadingState());
+    emit(FileAlreadyUploadedState(uniqueFileName: event.uniqueFileName));
+  }
+
+  deleteFileApi(
+      DeleteFileApiEvent event, Emitter<PreInspectionState> emit) async {
+    emit(PreInspectionLoadingState());
+    try {
+      api.Response res = await api.ApiService().postRequest(
+          "http://novaapiuat.shriramgi.com/UATShrigenAppService2.0/ShrigenServices/PreInspectionDetails.svc/RestService/DeletePIImage",
+          jsonEncode({
+            "Userpartyid": event.userPartyId,
+            "Userip": event.userIp,
+            "PreinspectionId": event.preInspectionId,
+            "UniqueFileName": event.uniqueFileName
+          }));
+
+      if (res.statusCode == 200) {
+        var resModel = deleteApiResponseFromJson(res.resBody);
+        if (resModel.messageResult!.result == "Success") {
+          emit(DeleteFileApiState(deleteApiResponse: resModel));
+        } else {
+          emit(PreInspectionFailureState(
+              resModel.messageResult!.errorMessage ?? "Request Failed!"));
+        }
+      } else {
+        emit(const PreInspectionFailureState("Request Failed!"));
+      }
+    } catch (e) {
+      emit(PreInspectionFailureState(e.toString()));
+    }
+  }
+
+  finalSubmitAPI(
+      FinalSubmitAPIEvent event, Emitter<PreInspectionState> emit) async {
+    emit(PreInspectionLoadingState());
+    try {
+      api.Response res = await api.ApiService().postRequest(
+          "http://novaapiuat.shriramgi.com/UATShrigenAppService2.0/ShrigenServices/PreInspectionDetails.svc/RestService/SubmitPreinspection",
+          jsonEncode({
+            "Userpartyid": event.userPartyId,
+            "PreinspectionId": event.preInspectionId
+          }));
+
+      if (res.statusCode == 200) {
+        var resModel = finalSubmitResponseFromJson(res.resBody);
+        if (resModel.messageResult!.result == "Success") {
+          emit(FinalSubmitAPIState(
+              resMsg: resModel.messageResult!.successMessage ?? ""));
+        } else {
+          emit(PreInspectionFailureState(
+              resModel.messageResult!.errorMessage ?? "Request Failed!"));
+        }
+      } else {
+        emit(const PreInspectionFailureState("Request Failed!"));
+      }
+    } catch (e) {
+      emit(PreInspectionFailureState(e.toString()));
+    }
+  }
+
+  movetodone(MoveToDoneEvent event, Emitter<PreInspectionState> emit) {
+    emit(PreInspectionLoadingState());
+    ismovetodone = event.ismovetodone;
+    emit(MoveToDoneState(ismovetodone: ismovetodone ?? false));
+  }
+
+  navtovideoScreen(NavigateToVideoScreenEvent event,
+      Emitter<PreInspectionState> emit) async {
+    final result = await Navigator.push(
+      event.context,
+      MaterialPageRoute(
+        builder: (context) {
+          return VideoRecordingScreen();
+        },
+      ),
+    );
+    if (result != null) {
+      videoPath = result.path;
+      debugPrint("Video File Path **** ---- ${result.path}");
+      emit(VideoRecordedCompletedState(videoPath: videoPath ?? ""));
+    }
+  }
+
+  navigatetoSignScreen(
+      NavigateToSignScreenEvent event, Emitter<PreInspectionState> emit) async {
+    dynamic signatureImage = await Navigator.push(
+      event.context,
+      MaterialPageRoute(
+        builder: (context) => SignatureScreen(
+          title: "Signature",
+          image64: (signature) {
+            // base64Encode(signature);
+            //  emit(SignCompletedState(signature: base64Encode(signature)));
+            // Handle signature
+          },
+        ),
+      ),
+    );
+    if (signatureImage != null) {
+      signature = base64Encode(signatureImage);
+      emit(SignCompletedState(
+          signature: base64Encode(signatureImage), signType: event.signType));
+    } else {
+      emit(SignNotSelectedState());
+    }
+  }
 
   getImageFromApi(
       GetImageFromApiEvent event, Emitter<PreInspectionState> emit) async {
@@ -229,8 +352,30 @@ class PreInspectionBloc extends Bloc<PreInspectionEvent, PreInspectionState> {
       default:
         docId = "247";
     }
-    emit(SelectDocIdState(
-        docId: docId, imageType: event.imageType, tabType: event.title));
+    event.title == "VIDEO RECORDING"
+        ? emit(FileUploadedSuccessfully(
+            referenceValue: attachmentId,
+            docType: "Video",
+            docId: docId,
+            userId: userId,
+            branch: "",
+            fileName: "Video.mp4",
+            base64Image: base64Encode(File(videoPath ?? "").readAsBytesSync()),
+          ))
+        : event.title == "SIGNATURE"
+            ? emit(FileUploadedSuccessfully(
+                referenceValue: attachmentId,
+                docType: "Sign",
+                docId: docId,
+                userId: userId,
+                branch: "",
+                fileName: "Sign.png",
+                base64Image: signature ?? "",
+              ))
+            : emit(SelectDocIdState(
+                docId: docId,
+                imageType: event.imageType,
+                tabType: event.title));
   }
 
   uploadshrigenapi(
@@ -260,10 +405,15 @@ class PreInspectionBloc extends Bloc<PreInspectionEvent, PreInspectionState> {
 
       if (res.statusCode == 200) {
         var resModel = shrigenUploadFileResponseFromJson(res.resBody);
-        resModel.docFileUploadDetails![0].xbizurl;
-        emit(ShrigenUploadApiState(
-            imageURl: resModel.docFileUploadDetails![0].xbizurl ?? "",
-            extension: resModel.docFileUploadDetails![0].extension ?? ""));
+        if (resModel.messageResult!.result == "Success") {
+          emit(ShrigenUploadApiState(
+              imageURl: resModel.docFileUploadDetails![0].xbizurl ?? "",
+              extension: resModel.docFileUploadDetails![0].extension ?? "",
+              uniqueFileName:
+                  resModel.docFileUploadDetails![0].uniqueFileName ?? ""));
+        } else {
+          emit(PreInspectionFailureState(resModel.messageResult!.errorMessage));
+        }
       } else {
         emit(const PreInspectionFailureState("Request Failed!"));
       }

@@ -4,13 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:tuple/tuple.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 import '../../bloc/preinspection/preinspection_bloc.dart';
 import '../../bloc/preinspection/preinspection_event.dart';
 import '../../bloc/preinspection/preinspection_state.dart';
 import '../../utils/constant.dart';
 import '../../utils/widgets/bottom_button_widget.dart';
-import '../signature/signature_screen.dart';
 import 'speeddail/preinspection_speed_dail.dart';
 
 class PreInspectionScreen extends StatefulWidget {
@@ -25,6 +24,7 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
     with TickerProviderStateMixin {
   static List<String> tabDetails = [];
   static List<Tuple2<String?, String?>?> morelist = [];
+  static List<Tuple2<String?, String?>?> signlist = [];
 
   static PageController pageController = PageController(initialPage: 0);
   static TabController? tabController;
@@ -33,14 +33,16 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
   List<String> imageUrl = [];
   List<Tuple2<String?, String?>?> tabNameList = [];
 
-  List<Tuple2<String?, String?>?> commonStrings = [];
+  List<Tuple3<String?, String?, String?>?> commonStrings = [];
+
+  static String videoPath = "";
+  static bool isDone = false;
+  static String fileUniqueName = "";
 
   Widget _buildMoreContent(String data, bool existsInTabData) {
     if (commonStrings.isNotEmpty &&
         existsInTabData &&
-        commonStrings.length > tabController!.index) {
-      print("object");
-    }
+        commonStrings.length > tabController!.index) {}
     return morelist.isEmpty
         ? Image.memory(
             base64Decode(data),
@@ -73,16 +75,54 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
           );
   }
 
-  Widget _buildVideoRecordingContent() {
-    return Image.asset(
-      'assest/addvideo.png',
-      width: MediaQuery.of(context).size.width * 1.5,
-      height: MediaQuery.of(context).size.height,
-      fit: BoxFit.contain,
-    );
+  Widget _buildVideoRecordingContent(bool existsInTabData) {
+    if (commonStrings.isNotEmpty &&
+        existsInTabData &&
+        commonStrings.length > tabController!.index) {
+      return InkWell(
+        onTap: () {
+          debugPrint(commonStrings[tabController!.index]!.item2 ?? "");
+          launchUrl(Uri.parse(commonStrings[tabController!.index]!.item2 ?? ""),
+              mode: LaunchMode.externalApplication);
+          //  OpenFilex.open(videoPath);
+          debugPrint(videoPath);
+        },
+        child: Image.asset(
+          'assest/bikeicon.png',
+          width: MediaQuery.of(context).size.width * 1.5,
+          height: MediaQuery.of(context).size.height,
+          fit: BoxFit.contain,
+        ),
+      );
+    } else if (isImageUploaded.isNotEmpty &&
+        isImageUploaded[tabController!.index]) {
+      return InkWell(
+        onTap: () {
+          debugPrint(imageUrl[tabController!.index]);
+          launchUrl(Uri.parse(imageUrl[tabController!.index]),
+              mode: LaunchMode.externalApplication);
+          //  OpenFilex.open(videoPath);
+          debugPrint(videoPath);
+        },
+        child: Image.asset(
+          'assest/bikeicon.png',
+          width: MediaQuery.of(context).size.width * 1.5,
+          height: MediaQuery.of(context).size.height,
+          fit: BoxFit.contain,
+        ),
+      );
+    } else {
+      return Image.asset(
+        'assest/addvideo.png',
+        width: MediaQuery.of(context).size.width * 1.5,
+        height: MediaQuery.of(context).size.height,
+        fit: BoxFit.contain,
+      );
+    }
   }
 
-  Widget _buildSignatureContent(String data) {
+  Widget _buildSignatureContent(
+      String data, bool existsInTabData, preInspectionBloc) {
     return SingleChildScrollView(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.end,
@@ -113,7 +153,11 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
             ),
             textAlign: TextAlign.center,
           ),
-          _buildSignatureSection(data, "Add Sign"),
+          signlist.isEmpty
+              ? _buildSignatureSection(
+                  "", data, "Add Sign", preInspectionBloc, "INSign")
+              : _buildSignatureSection(signlist[0]!.item1 ?? "", data,
+                  "Add Sign", preInspectionBloc, "INSign"),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10.0),
             child: Divider(
@@ -132,24 +176,35 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
             ),
             textAlign: TextAlign.center,
           ),
-          _buildSignatureSection(data, "Add Sign"),
+          signlist.isEmpty || signlist.length < 2
+              ? _buildSignatureSection(
+                  "", data, "Add Sign", preInspectionBloc, "ABE Sign")
+              : _buildSignatureSection(signlist[1]!.item1 ?? "", data,
+                  "Add Sign", preInspectionBloc, "ABE Sign"),
           const SizedBox(height: 100),
         ],
       ),
     );
   }
 
-  Widget _buildSignatureSection(String data, String buttonText) {
+  Widget _buildSignatureSection(
+      String url, String data, String buttonText, preInspectionBloc, signType) {
     return Column(
       mainAxisSize: MainAxisSize.max,
       children: [
         Padding(
           padding: const EdgeInsets.all(15.0),
-          child: Image.memory(
-            base64Decode(data),
-            width: MediaQuery.of(context).size.width * 3.5,
-            height: MediaQuery.of(context).size.height / 5,
-          ),
+          child: url == ""
+              ? Image.memory(
+                  base64Decode(data),
+                  width: MediaQuery.of(context).size.width * 3.5,
+                  height: MediaQuery.of(context).size.height / 5,
+                )
+              : Image.network(
+                  url,
+                  width: MediaQuery.of(context).size.width * 3.5,
+                  height: MediaQuery.of(context).size.height / 5,
+                ),
         ),
         Row(
           mainAxisSize: MainAxisSize.max,
@@ -159,20 +214,8 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: ElevatedButton(
                 onPressed: () async {
-                  dynamic signatureImage = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SignatureScreen(
-                        title: "Signature",
-                        image64: (signature) {
-                          // Handle signature
-                        },
-                      ),
-                    ),
-                  );
-                  if (signatureImage != null) {
-                    // Handle the returned signature image
-                  }
+                  preInspectionBloc.add(NavigateToSignScreenEvent(
+                      context: context, signType: signType));
                 },
                 child: Row(
                   children: [
@@ -239,19 +282,38 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
           tabController = state.tabController;
           isImageUploaded = List.filled(tabDetails.length, false);
           imageUrl = List.filled(tabDetails.length, "");
+        } else if (state is FinalSubmitAPIState) {
+          Navigator.pop(context);
+          Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.resMsg),
+              backgroundColor: Colors.green,
+            ),
+          );
+        } else if (state is MoveToDoneState) {
+          isDone = state.ismovetodone;
+        } else if (state is SignCompletedState) {
+          context.read<PreInspectionBloc>().add(
+              const SelectDocIdEvent(title: "SIGNATURE", imageType: "Sign"));
+        } else if (state is VideoRecordedCompletedState) {
+          videoPath = state.videoPath;
+          context.read<PreInspectionBloc>().add(const SelectDocIdEvent(
+              title: "VIDEO RECORDING", imageType: "Video"));
         } else if (state is GetImageFromApiState) {
           for (int i = 0; i < tabDetails.length; i++) {
             tabNameList.add(Tuple2(tabDetails[i].split(":")[0],
                 "" /* tabDetails[i].split(":")[1] */));
           }
-          List<Tuple2<String?, String?>?> apiName = [];
+          List<Tuple3<String?, String?, String?>?> apiName = [];
           for (int i = 0;
               i < state.getImageResponse.response![0].imageresponse!.length;
               i++) {
-            apiName.add(Tuple2(
+            apiName.add(Tuple3(
                 state.getImageResponse.response![0].imageresponse![i].tagName!,
-                state
-                    .getImageResponse.response![0].imageresponse![i].xbizurl!));
+                state.getImageResponse.response![0].imageresponse![i].xbizurl!,
+                state.getImageResponse.response![0].imageresponse![i]
+                    .fileUniqueName!));
             if (state
                     .getImageResponse.response![0].imageresponse![i].tagName! ==
                 "MORE") {
@@ -260,13 +322,15 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
                   state.getImageResponse.response![0].imageresponse![i]
                       .extension!));
             } /*  else {} */
+            if (state
+                    .getImageResponse.response![0].imageresponse![i].tagName! ==
+                "Signature") {
+              signlist.add(Tuple2(
+                  state.getImageResponse.response![0].imageresponse![i].xbizurl,
+                  state.getImageResponse.response![0].imageresponse![i]
+                      .extension!));
+            }
           }
-          // for (var tabTuple in tabNameList) {
-          //   if (apiName.contains(str)) {
-          //     commonStrings.add(str);
-
-          //   }
-          // }
 
           // Iterate over each tuple in tabNameList
           for (var tabTuple in tabNameList) {
@@ -295,10 +359,47 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
           pageController.jumpToPage(tabController!.index);
         } else if (state is ShrigenUploadApiState) {
           debugPrint(state.imageURl);
+          fileUniqueName = state.uniqueFileName;
           isImageUploaded[tabController!.index] = true;
-          tabName == "MORE"
-              ? morelist.add(Tuple2(state.imageURl, state.extension))
-              : imageUrl[tabController!.index] = state.imageURl;
+          if (tabName == "MORE") {
+            morelist.add(Tuple2(state.imageURl, state.extension));
+          } else if (tabName == "SIGNATURE") {
+            signlist.add(Tuple2(state.imageURl, state.extension));
+          } else {
+            imageUrl[tabController!.index] = state.imageURl;
+          }
+        } else if (state is FileAlreadyUploadedState) {
+          fileUniqueName = state.uniqueFileName;
+          showDialog(
+            context: context,
+            builder: (alertDialogContext) => AlertDialog(
+              title: const Text("Already Uploaded"),
+              content: const SizedBox(
+                height: 60,
+                width: 60,
+                child: Text("Do You want to delete it?"),
+              ),
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text("No"),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    context.read<PreInspectionBloc>().add(DeleteFileApiEvent(
+                        userPartyId: '',
+                        userIp: "",
+                        preInspectionId: preInspectionId,
+                        uniqueFileName: fileUniqueName));
+                  },
+                  child: const Text("Yes"),
+                )
+              ],
+            ),
+          );
         } else if (state is FileUploadedSuccessfully) {
           debugPrint("FileUploadedSuccessfully");
           context.read<PreInspectionBloc>().add(ShrigenUploadApiEvent(
@@ -310,27 +411,44 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
               fileName: state.fileName,
               base64Image: state.base64Image));
         } else if (state is SelectDocIdState) {
-          state.imageType == "Doc"
-              ? context.read<PreInspectionBloc>().add(TakeDocumentEvent(
-                    imageType: state.imageType,
-                    referenceValue: '',
-                    docType: state.tabType,
-                    docId: '',
-                    userId: '',
-                    branch: '',
-                    fileName: '',
-                    base64Image: '',
-                  ))
-              : context.read<PreInspectionBloc>().add(TakePhotEvent(
-                    imageType: state.imageType,
-                    referenceValue: '',
-                    docType: state.tabType,
-                    docId: '',
-                    userId: '',
-                    branch: '',
-                    fileName: '',
-                    base64Image: '',
-                  ));
+          debugPrint(commonStrings.isNotEmpty &&
+                  commonStrings.length > tabController!.index &&
+                  isImageUploaded.isNotEmpty &&
+                  isImageUploaded[tabController!.index]
+              ? "***** true"
+              : "***** false");
+          if (/* commonStrings.isNotEmpty &&
+              commonStrings.length > tabController!.index */
+              (commonStrings.isNotEmpty &&
+                      commonStrings.length > tabController!.index) ||
+                  (isImageUploaded.isNotEmpty &&
+                      isImageUploaded[tabController!.index])) {
+            context
+                .read<PreInspectionBloc>()
+                .add(FileAlreadyUploadedEvent(uniqueFileName: fileUniqueName));
+          } else {
+            state.imageType == "Doc"
+                ? context.read<PreInspectionBloc>().add(TakeDocumentEvent(
+                      imageType: state.imageType,
+                      referenceValue: '',
+                      docType: state.tabType,
+                      docId: '',
+                      userId: '',
+                      branch: '',
+                      fileName: '',
+                      base64Image: '',
+                    ))
+                : context.read<PreInspectionBloc>().add(TakePhotEvent(
+                      imageType: state.imageType,
+                      referenceValue: '',
+                      docType: state.tabType,
+                      docId: '',
+                      userId: '',
+                      branch: '',
+                      fileName: '',
+                      base64Image: '',
+                    ));
+          }
         } else if (state is PreInspectionFailureState) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -342,6 +460,8 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
       }, builder: (context, state) {
         if (state is PreInspectionInitialState) {
           morelist = [];
+          signlist = [];
+          isDone = false;
           context.read<PreInspectionBloc>().add(GetImageFromApiEvent());
           debugPrint("Init");
         }
@@ -426,289 +546,18 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
                             case "MORE":
                               return _buildMoreContent(data, existsInTabData);
                             case "VIDEO RECORDING":
-                              return _buildVideoRecordingContent();
+                              return _buildVideoRecordingContent(
+                                  existsInTabData);
                             case "SIGNATURE":
-                              return _buildSignatureContent(data);
+                              return _buildSignatureContent(
+                                  data,
+                                  existsInTabData,
+                                  BlocProvider.of<PreInspectionBloc>(context));
                             default:
                               return _buildDefaultContent(
                                   itemIndex, existsInTabData);
                           }
-                        }
-
-                        /*  return tabDetails[itemIndex].split(":")[0] == "MORE"
-                            ? morelist.isEmpty
-                                ? Image.memory(
-                                    base64Decode(
-                                        tabDetails[itemIndex].split(":")[1]),
-                                    width:
-                                        MediaQuery.of(context).size.width * 3.5,
-                                    height:
-                                        MediaQuery.of(context).size.height / 2,
-                                  )
-                                : Container()
-                            : tabDetails[itemIndex].split(":")[0] ==
-                                    "VIDEO RECORDING"
-                                ? Image.asset(
-                                    'assest/addvideo.png',
-                                    width:
-                                        MediaQuery.of(context).size.width * 1.5,
-                                    height: MediaQuery.of(context).size.height,
-                                    fit: BoxFit.contain,
-                                  )
-                                : tabDetails[itemIndex].split(":")[0] ==
-                                        "SIGNATURE"
-                                    ? SingleChildScrollView(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            const Padding(
-                                              padding: EdgeInsets.only(
-                                                  left: 10.0, right: 10),
-                                              child: Text(
-                                                'Declaration: \n I/we hereby declare that I have carried out inspection of the proposed vehicle in the presence of proposer / authorized representative; attached images, videos, data, reports belong to current date/time and there is no manipulation in the vehicle detail.',
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                    fontFamily: 'Poppins',
-                                                    decoration: TextDecoration
-                                                        .underline,
-                                                    fontSize: 14,
-                                                    letterSpacing: 1,
-                                                    fontWeight:
-                                                        FontWeight.w600),
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            const Text(
-                                              "Insured Signature",
-                                              style: TextStyle(
-                                                  fontFamily: 'Poppins',
-                                                  decoration:
-                                                      TextDecoration.underline,
-                                                  fontSize: 14,
-                                                  letterSpacing: 1,
-                                                  fontWeight: FontWeight.w600),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            Column(
-                                              mainAxisSize: MainAxisSize.max,
-                                              children: [
-                                                Padding(
-                                                  padding: const EdgeInsets.all(
-                                                      15.0),
-                                                  child: Image.memory(
-                                                    base64Decode(
-                                                        tabDetails[itemIndex]
-                                                            .split(":")[1]),
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            3.5,
-                                                    height:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height /
-                                                            5,
-                                                  ),
-                                                ),
-                                                Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.max,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.end,
-                                                  children: [
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 10.0,
-                                                              right: 10),
-                                                      child: ElevatedButton(
-                                                          onPressed: () async {
-                                                            // Open Signature Screen and wait for the result
-                                                            dynamic
-                                                                signatureImage =
-                                                                await Navigator
-                                                                    .push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        SignatureScreen(
-                                                                  title:
-                                                                      "Signature",
-                                                                  image64:
-                                                                      (signature) {
-                                                                    print(
-                                                                        "Signature captured!");
-                                                                  },
-                                                                ),
-                                                              ),
-                                                            );
-
-                                                            if (signatureImage !=
-                                                                null) {
-                                                              // Handle the returned signature image
-                                                              print(
-                                                                  "Signature received!");
-                                                              // You can now use the signatureImage, e.g., display it or send to an API.
-                                                            }
-                                                          },
-                                                          child: const Row(
-                                                            children: [
-                                                              Icon(
-                                                                Icons.add_sharp,
-                                                                color: Colors
-                                                                    .black,
-                                                                size: 30,
-                                                              ),
-                                                              Text("Add Sign")
-                                                            ],
-                                                          )),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 10.0, right: 10),
-                                              child: Divider(
-                                                thickness: 1,
-                                                color: Colors.black
-                                                    .withOpacity(.40),
-                                              ),
-                                            ),
-                                            const Text(
-                                              "Agent/Broker/Excutive Signature",
-                                              style: TextStyle(
-                                                  fontFamily: 'Poppins',
-                                                  decoration:
-                                                      TextDecoration.underline,
-                                                  fontSize: 14,
-                                                  letterSpacing: 1,
-                                                  fontWeight: FontWeight.w600),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            Column(
-                                              mainAxisSize: MainAxisSize.max,
-                                              children: [
-                                                Padding(
-                                                  padding: const EdgeInsets.all(
-                                                      15.0),
-                                                  child: Image.memory(
-                                                    base64Decode(
-                                                        tabDetails[itemIndex]
-                                                            .split(":")[1]),
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            3.5,
-                                                    height:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height /
-                                                            5,
-                                                  ),
-                                                ),
-                                                Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.max,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.end,
-                                                  children: [
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              left: 10.0,
-                                                              right: 10),
-                                                      child: ElevatedButton(
-                                                        onPressed: () {},
-                                                        child: const Row(
-                                                            children: [
-                                                              Icon(
-                                                                Icons.add_sharp,
-                                                                color: Colors
-                                                                    .black,
-                                                                size: 30,
-                                                              ),
-                                                              Text("Add Sign")
-                                                            ]),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(
-                                              height: 100,
-                                            )
-                                          ],
-                                        ),
-                                      )
-                                    : commonStrings.isNotEmpty &&
-                                            existsInTabData &&
-                                            commonStrings.length >
-                                                tabController!.index
-                                        ? Image.network(
-                                            commonStrings[tabController!.index]!
-                                                    .item2 ??
-                                                "",
-                                            errorBuilder: (BuildContext context,
-                                                Object exception,
-                                                StackTrace? stackTrace) {
-                                              return const Center(
-                                                child: Text("Image Not Found"),
-                                              );
-                                            },
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                3.5,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height /
-                                                2,
-                                            fit: BoxFit.fill,
-                                          )
-                                        : isImageUploaded.isEmpty
-                                            ? null
-                                            : isImageUploaded[
-                                                    tabController!.index]
-                                                ? Image.network(
-                                                    imageUrl[
-                                                        tabController!.index],
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            3.5,
-                                                    height:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height /
-                                                            2,
-                                                  )
-                                                : Image.memory(
-                                                    base64Decode(
-                                                        tabDetails[itemIndex]
-                                                            .split(":")[1]),
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            3.5,
-                                                    height:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height /
-                                                            2,
-                                                  ); 
-                      },*/
-                        ),
+                        }),
                   ),
                 ],
               ),
@@ -716,23 +565,60 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
             floatingActionButton: tabName == "SIGNATURE"
                 ? const SizedBox()
                 : PreInspectionFabWidget(tabType: tabName ?? ""),
-            bottomNavigationBar: Container(
-              padding: const EdgeInsets.only(
-                  bottom: 0.0, left: 20.0, right: 20.0, top: 0.0),
-              child: BottomButton(
-                bottonTitle: 'NEXT',
-                backgroundColor: Colors.white.withOpacity(0.85),
-                titleColor: Colors.black,
-                borderColor: Colors.black.withOpacity(.85),
-                onTap: () async {
-                  debugPrint(isImageUploaded.length.toString());
-                  tabName == "SIGNATURE"
-                      ? null
-                      : tabController!.animateTo((tabController!.index + 1));
-                  pageController.jumpToPage(tabController!.index);
-                },
-              ),
-            ),
+            bottomNavigationBar: isDone
+                ? Container(
+                    padding: const EdgeInsets.only(
+                        bottom: 0.0, left: 20.0, right: 20.0, top: 0.0),
+                    child: BottomButton(
+                      bottonTitle: 'DONE',
+                      backgroundColor: Colors.white.withOpacity(0.85),
+                      titleColor: Colors.black,
+                      borderColor: Colors.black.withOpacity(.85),
+                      onTap: () async {
+                        context.read<PreInspectionBloc>().add(
+                            FinalSubmitAPIEvent(
+                                userPartyId: userId,
+                                preInspectionId: preInspectionId));
+                      },
+                    ),
+                  )
+                : Container(
+                    padding: const EdgeInsets.only(
+                        bottom: 0.0, left: 20.0, right: 20.0, top: 0.0),
+                    child: BottomButton(
+                      bottonTitle: 'NEXT',
+                      backgroundColor: Colors.white.withOpacity(0.85),
+                      titleColor: Colors.black,
+                      borderColor: Colors.black.withOpacity(.85),
+                      onTap: () async {
+                        if (tabName == "SIGNATURE") {
+                          // if (signlist.length < 2) {
+                          //   ScaffoldMessenger.of(context).showSnackBar(
+                          //     const SnackBar(
+                          //       content: Text("Upload Signature"),
+                          //       backgroundColor: Colors.red,
+                          //     ),
+                          //   );
+                          // } else {
+                          context
+                              .read<PreInspectionBloc>()
+                              .add(MoveToDoneEvent(ismovetodone: !isDone));
+                          //}
+                        } else {
+                          tabController!.animateTo((tabController!.index + 1));
+                          pageController.jumpToPage(tabController!.index);
+                        }
+                        // debugPrint(isImageUploaded.length.toString());
+                        // tabName == "SIGNATURE"
+                        //     ? context
+                        //         .read<PreInspectionBloc>()
+                        //         .add(MoveToDoneEvent(ismovetodone: !isDone))
+                        //     : tabController!
+                        //         .animateTo((tabController!.index + 1));
+                        // pageController.jumpToPage(tabController!.index);
+                      },
+                    ),
+                  ),
           ),
         );
       }),

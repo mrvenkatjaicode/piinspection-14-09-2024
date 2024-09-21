@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 
 abstract class VideoEvent extends Equatable {
   const VideoEvent();
@@ -7,8 +8,20 @@ abstract class VideoEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class StartRecordingEvent extends VideoEvent {}
+class InitializeCameraEvent extends VideoEvent {}
 
-class StopRecordingEvent extends VideoEvent {}
+class StartRecordingEvent extends VideoEvent {
+  final BuildContext context;
+  final bool isshowStartRecording;
+
+  const StartRecordingEvent({required this.context, required this.isshowStartRecording});
+}
+
+class StopRecordingEvent extends VideoEvent {
+  final BuildContext context;
+  final bool isshowStartRecording;
+
+  const StopRecordingEvent({required this.context, required this.isshowStartRecording});
+}
 
 class ResetRecordingEvent extends VideoEvent {}

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:mnovapi/bloc/preinspection/preinspection_event.dart';
+import 'package:mnovapi/screens/preinspection/video_recording/video_recording_screen.dart';
 
 import '../../../bloc/preinspection/preinspection_bloc.dart';
 
@@ -30,6 +31,18 @@ class _PreInspectionFabWidgetState extends State<PreInspectionFabWidget> {
             TextButton(
               onPressed: () async {
                 Navigator.pop(context);
+                BlocProvider.of<PreInspectionBloc>(context).add(
+                    NavigateToVideoScreenEvent(
+                        context: context));
+                // final result = await Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (context) {
+                //       return VideoRecordingScreen();
+                //     },
+                //   ),
+                // );
+                // debugPrint("Video File Path ---- ${result.path}");
               },
               child: const Text(
                 'OK',
@@ -90,9 +103,9 @@ class _PreInspectionFabWidgetState extends State<PreInspectionFabWidget> {
             label: 'From Docs & Pdf',
             labelStyle: const TextStyle(fontSize: 18.0),
             onTap: () {
-               preInspectionBloc.add(
+              preInspectionBloc.add(
                   SelectDocIdEvent(title: widget.tabType, imageType: "Doc"));
-             // preInspectionBloc.add(TakeDocumentEvent());
+              // preInspectionBloc.add(TakeDocumentEvent());
             },
           ),
         if (widget.tabType != "VIDEO RECORDING")
