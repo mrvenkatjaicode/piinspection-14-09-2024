@@ -12,13 +12,22 @@ abstract class PIDetailEvent extends Equatable {
   List<Object> get props => [];
 }
 
+class PIDetailSubmitEvent extends PIDetailEvent {}
+
+class DeleteUploadEvent extends PIDetailEvent {
+  final String tagName;
+
+  const DeleteUploadEvent({required this.tagName});
+}
+
 class PIDetailIntialEvent extends PIDetailEvent {}
 
 class PIDetailsGetApiEvent extends PIDetailEvent {
   final String preInspectionId;
   final String userPartyId;
 
- const PIDetailsGetApiEvent({required this.preInspectionId, required this.userPartyId});
+  const PIDetailsGetApiEvent(
+      {required this.preInspectionId, required this.userPartyId});
 }
 
 class PIDetailsSaveApiEvent extends PIDetailEvent {

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:mnovapi/models/pi_detail/pi_detail_save_model.dart';
 import 'package:mnovapi/utils/widgets/drop_down_pi_widget.dart';
 import 'package:overlay_loader_with_app_icon/overlay_loader_with_app_icon.dart';
 import 'package:intl/intl.dart';
@@ -137,6 +138,8 @@ class _PIDetailScreenState extends State<PIDetailScreen> {
   bool isrccopyuploaded = false;
   bool ispreviouspolicyuploaded = false;
   bool isinvoicecopyuploaded = false;
+
+  List<RequestPifilesuploadObj> requestPifilesuploadObjlist = [];
 
   void showYearPicker(BuildContext context, PIDetailBloc yearPickerBloc) {
     showDialog(
@@ -381,12 +384,50 @@ class _PIDetailScreenState extends State<PIDetailScreen> {
               ? ""
               : state.pidetailsresponse.response![0].conveyanceamount
                   .toString();
+          currentstatustextcontoller.text =
+              state.pidetailsresponse.response![0].statusname.toString();
           modeofpaymenttextcontoller.text =
               state.pidetailsresponse.response![0].modeofpayment.toString();
           intimationstatustextcontoller.text =
               state.pidetailsresponse.response![0].intimationremarks.toString();
           contactnoforsmstextcontoller.text =
               state.pidetailsresponse.response![0].contacttoSendlink.toString();
+        } else if (state is FileUploadedSuccessfully) {
+          if (state.tagName == "RC Copy") {
+            isrccopyuploaded = true;
+          } else if (state.tagName == "Previous Policy") {
+            ispreviouspolicyuploaded = true;
+          } else if (state.tagName == "Invoice Copy") {
+            isinvoicecopyuploaded = true;
+          }
+          requestPifilesuploadObjlist = state.requestPifilesuploadObjlist;
+        } else if (state is DeleteUploadState) {
+          if (state.tagName == "RC Copy") {
+            isrccopyuploaded = false;
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("RC Copy Deleted"),
+                backgroundColor: Colors.green,
+              ),
+            );
+          } else if (state.tagName == "Previous Policy") {
+            ispreviouspolicyuploaded = false;
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Previous Policy Deleted"),
+                backgroundColor: Colors.green,
+              ),
+            );
+          } else if (state.tagName == "Invoice Copy") {
+            isinvoicecopyuploaded = false;
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Invoice Copy Deleted"),
+                backgroundColor: Colors.green,
+              ),
+            );
+          }
+          requestPifilesuploadObjlist = state.requestPifilesuploadObjlist;
         } else if (state is PIDetailSaveApiState) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -2108,53 +2149,55 @@ class _PIDetailScreenState extends State<PIDetailScreen> {
                                                     Row(
                                                       children: [
                                                         IconButton(
-                                                          onPressed: /*  provider
+                                                          onPressed:
+                                                              isrccopyuploaded
+                                                                  ? null
+                                                                  : /*  provider
                                                                                     .isrccopyupload
                                                                                 ? null
                                                                                 : */
-                                                              () {
-                                                            context
-                                                                .read<
-                                                                    PIDetailBloc>()
-                                                                .add(const ShowBottomSheetEvent(
-                                                                    type:
-                                                                        "RC Copy"));
-                                                            // provider
-                                                            //         .isrccopyupload
-                                                            //     ? showDialog(
-                                                            //         context:
-                                                            //             context,
-                                                            //         builder: (alertDialogContext) =>
-                                                            //             AlertDialog(
-                                                            //           content:
-                                                            //               const Wrap(
-                                                            //             children: [
-                                                            //               Center(
-                                                            //                   child: Text(
-                                                            //                 "Only 1 document is allowed. Please delete the existing file to upload a new one",
-                                                            //                 style: TextStyle(color: redcolor),
-                                                            //               )),
-                                                            //             ],
-                                                            //           ),
-                                                            //           actions: [
-                                                            //             TextButton(
-                                                            //                 onPressed: () {
-                                                            //                   Navigator.pop(context);
-                                                            //                 },
-                                                            //                 child: const Text("Cancel")),
-                                                            //             TextButton(
-                                                            //                 onPressed: () {
-                                                            //                   Navigator.pop(context);
-                                                            //                   provider.deleterccopy("RC Copy");
-                                                            //                 },
-                                                            //                 child: const Text("Delete")),
-                                                            //           ],
-                                                            //         ),
-                                                            //       )
-                                                            //     : provider.showbottomsheet(
-                                                            //         "RC Copy",
-                                                            //         context);
-                                                          },
+                                                                  () {
+                                                                      context
+                                                                          .read<
+                                                                              PIDetailBloc>()
+                                                                          .add(const ShowBottomSheetEvent(
+                                                                              type: "RC Copy"));
+                                                                      // provider
+                                                                      //         .isrccopyupload
+                                                                      //     ? showDialog(
+                                                                      //         context:
+                                                                      //             context,
+                                                                      //         builder: (alertDialogContext) =>
+                                                                      //             AlertDialog(
+                                                                      //           content:
+                                                                      //               const Wrap(
+                                                                      //             children: [
+                                                                      //               Center(
+                                                                      //                   child: Text(
+                                                                      //                 "Only 1 document is allowed. Please delete the existing file to upload a new one",
+                                                                      //                 style: TextStyle(color: redcolor),
+                                                                      //               )),
+                                                                      //             ],
+                                                                      //           ),
+                                                                      //           actions: [
+                                                                      //             TextButton(
+                                                                      //                 onPressed: () {
+                                                                      //                   Navigator.pop(context);
+                                                                      //                 },
+                                                                      //                 child: const Text("Cancel")),
+                                                                      //             TextButton(
+                                                                      //                 onPressed: () {
+                                                                      //                   Navigator.pop(context);
+                                                                      //                   provider.deleterccopy("RC Copy");
+                                                                      //                 },
+                                                                      //                 child: const Text("Delete")),
+                                                                      //           ],
+                                                                      //         ),
+                                                                      //       )
+                                                                      //     : provider.showbottomsheet(
+                                                                      //         "RC Copy",
+                                                                      //         context);
+                                                                    },
                                                           icon: const Icon(
                                                               Icons.upload),
                                                           color: /*  provider
@@ -2164,68 +2207,42 @@ class _PIDetailScreenState extends State<PIDetailScreen> {
                                                               Colors.green,
                                                         ),
                                                         IconButton(
-                                                          onPressed: () {
-                                                            // if (provider
-                                                            //     .isrccopyupload) {
-                                                            //   showDialog(
-                                                            //     context:
-                                                            //         context,
-                                                            //     builder:
-                                                            //         (alertDialogContext) =>
-                                                            //             AlertDialog(
-                                                            //       content:
-                                                            //           const Wrap(
-                                                            //         children: [
-                                                            //           Center(
-                                                            //               child: Text(
-                                                            //             "Do you want to delete the file",
-                                                            //             style: TextStyle(color: redcolor),
-                                                            //           )),
-                                                            //         ],
-                                                            //       ),
-                                                            //       actions: [
-                                                            //         TextButton(
-                                                            //             onPressed: () {
-                                                            //               Navigator.pop(context);
-                                                            //             },
-                                                            //             child: const Text("Cancel")),
-                                                            //         TextButton(
-                                                            //             onPressed: () {
-                                                            //               Navigator.pop(context);
-                                                            //               provider.deleterccopy("RC Copy");
-                                                            //             },
-                                                            //             child: const Text("Delete")),
-                                                            //       ],
-                                                            //     ),
-                                                            //   );
-                                                            // } else {
-                                                            //   showDialog(
-                                                            //     context:
-                                                            //         context,
-                                                            //     builder:
-                                                            //         (alertDialogContext) =>
-                                                            //             AlertDialog(
-                                                            //       content:
-                                                            //           const Wrap(
-                                                            //         children: [
-                                                            //           Center(
-                                                            //               child: Text(
-                                                            //             "No file available to delete",
-                                                            //             style: TextStyle(color: redcolor),
-                                                            //           )),
-                                                            //         ],
-                                                            //       ),
-                                                            //       actions: [
-                                                            //         TextButton(
-                                                            //             onPressed: () {
-                                                            //               Navigator.pop(context);
-                                                            //             },
-                                                            //             child: const Text("Ok")),
-                                                            //       ],
-                                                            //     ),
-                                                            //   );
-                                                            // }
-                                                          },
+                                                          onPressed:
+                                                              isrccopyuploaded
+                                                                  ? () {
+                                                                      showDialog(
+                                                                        context:
+                                                                            context,
+                                                                        builder:
+                                                                            (alertDialogContext) =>
+                                                                                AlertDialog(
+                                                                          content:
+                                                                              const Wrap(
+                                                                            children: [
+                                                                              Center(
+                                                                                  child: Text(
+                                                                                "Do you want to delete the file",
+                                                                                style: TextStyle(color: Colors.red),
+                                                                              )),
+                                                                            ],
+                                                                          ),
+                                                                          actions: [
+                                                                            TextButton(
+                                                                                onPressed: () {
+                                                                                  Navigator.pop(context);
+                                                                                },
+                                                                                child: const Text("Cancel")),
+                                                                            TextButton(
+                                                                                onPressed: () {
+                                                                                  Navigator.pop(context);
+                                                                                  context.read<PIDetailBloc>().add(const DeleteUploadEvent(tagName: "RC Copy"));
+                                                                                },
+                                                                                child: const Text("Delete")),
+                                                                          ],
+                                                                        ),
+                                                                      );
+                                                                    }
+                                                                  : null,
                                                           icon: const Icon(
                                                               Icons.delete),
                                                           color: Colors.red,
@@ -2289,53 +2306,55 @@ class _PIDetailScreenState extends State<PIDetailScreen> {
                                                     Row(
                                                       children: [
                                                         IconButton(
-                                                          onPressed: /* provider
+                                                          onPressed:
+                                                              ispreviouspolicyuploaded
+                                                                  ? null
+                                                                  : /* provider
                                                                                     .ispreviouspolicyupload
                                                                                 ? null
                                                                                 :  */
-                                                              () {
-                                                            context
-                                                                .read<
-                                                                    PIDetailBloc>()
-                                                                .add(const ShowBottomSheetEvent(
-                                                                    type:
-                                                                        "Previous Policy"));
-                                                            // provider
-                                                            //         .ispreviouspolicyupload
-                                                            //     ? showDialog(
-                                                            //         context:
-                                                            //             context,
-                                                            //         builder: (alertDialogContext) =>
-                                                            //             AlertDialog(
-                                                            //           content:
-                                                            //               const Wrap(
-                                                            //             children: [
-                                                            //               Center(
-                                                            //                   child: Text(
-                                                            //                 "Only 1 document is allowed. Please delete the existing file to upload a new one",
-                                                            //                 style: TextStyle(color: redcolor),
-                                                            //               )),
-                                                            //             ],
-                                                            //           ),
-                                                            //           actions: [
-                                                            //             TextButton(
-                                                            //                 onPressed: () {
-                                                            //                   Navigator.pop(context);
-                                                            //                 },
-                                                            //                 child: const Text("Cancel")),
-                                                            //             TextButton(
-                                                            //                 onPressed: () {
-                                                            //                   Navigator.pop(context);
-                                                            //                   provider.deletepreviouspolicy("Previous Policy");
-                                                            //                 },
-                                                            //                 child: const Text("Delete")),
-                                                            //           ],
-                                                            //         ),
-                                                            //       )
-                                                            //     : provider.showbottomsheet(
-                                                            //         "Previous Policy",
-                                                            //         context);
-                                                          },
+                                                                  () {
+                                                                      context
+                                                                          .read<
+                                                                              PIDetailBloc>()
+                                                                          .add(const ShowBottomSheetEvent(
+                                                                              type: "Previous Policy"));
+                                                                      // provider
+                                                                      //         .ispreviouspolicyupload
+                                                                      //     ? showDialog(
+                                                                      //         context:
+                                                                      //             context,
+                                                                      //         builder: (alertDialogContext) =>
+                                                                      //             AlertDialog(
+                                                                      //           content:
+                                                                      //               const Wrap(
+                                                                      //             children: [
+                                                                      //               Center(
+                                                                      //                   child: Text(
+                                                                      //                 "Only 1 document is allowed. Please delete the existing file to upload a new one",
+                                                                      //                 style: TextStyle(color: redcolor),
+                                                                      //               )),
+                                                                      //             ],
+                                                                      //           ),
+                                                                      //           actions: [
+                                                                      //             TextButton(
+                                                                      //                 onPressed: () {
+                                                                      //                   Navigator.pop(context);
+                                                                      //                 },
+                                                                      //                 child: const Text("Cancel")),
+                                                                      //             TextButton(
+                                                                      //                 onPressed: () {
+                                                                      //                   Navigator.pop(context);
+                                                                      //                   provider.deletepreviouspolicy("Previous Policy");
+                                                                      //                 },
+                                                                      //                 child: const Text("Delete")),
+                                                                      //           ],
+                                                                      //         ),
+                                                                      //       )
+                                                                      //     : provider.showbottomsheet(
+                                                                      //         "Previous Policy",
+                                                                      //         context);
+                                                                    },
                                                           icon: const Icon(
                                                               Icons.upload),
                                                           color: /* provider
@@ -2345,68 +2364,42 @@ class _PIDetailScreenState extends State<PIDetailScreen> {
                                                               Colors.green,
                                                         ),
                                                         IconButton(
-                                                          onPressed: () {
-                                                            // if (provider
-                                                            //     .ispreviouspolicyupload) {
-                                                            //   showDialog(
-                                                            //     context:
-                                                            //         context,
-                                                            //     builder:
-                                                            //         (alertDialogContext) =>
-                                                            //             AlertDialog(
-                                                            //       content:
-                                                            //           const Wrap(
-                                                            //         children: [
-                                                            //           Center(
-                                                            //               child: Text(
-                                                            //             "Do you want to delete the file",
-                                                            //             style: TextStyle(color: redcolor),
-                                                            //           )),
-                                                            //         ],
-                                                            //       ),
-                                                            //       actions: [
-                                                            //         TextButton(
-                                                            //             onPressed: () {
-                                                            //               Navigator.pop(context);
-                                                            //             },
-                                                            //             child: const Text("Cancel")),
-                                                            //         TextButton(
-                                                            //             onPressed: () {
-                                                            //               Navigator.pop(context);
-                                                            //               provider.deletepreviouspolicy("Previous Policy");
-                                                            //             },
-                                                            //             child: const Text("Delete")),
-                                                            //       ],
-                                                            //     ),
-                                                            //   );
-                                                            // } else {
-                                                            //   showDialog(
-                                                            //     context:
-                                                            //         context,
-                                                            //     builder:
-                                                            //         (alertDialogContext) =>
-                                                            //             AlertDialog(
-                                                            //       content:
-                                                            //           const Wrap(
-                                                            //         children: [
-                                                            //           Center(
-                                                            //               child: Text(
-                                                            //             "No file available to delete",
-                                                            //             style: TextStyle(color: redcolor),
-                                                            //           )),
-                                                            //         ],
-                                                            //       ),
-                                                            //       actions: [
-                                                            //         TextButton(
-                                                            //             onPressed: () {
-                                                            //               Navigator.pop(context);
-                                                            //             },
-                                                            //             child: const Text("Ok")),
-                                                            //       ],
-                                                            //     ),
-                                                            //   );
-                                                            // }
-                                                          },
+                                                          onPressed:
+                                                              ispreviouspolicyuploaded
+                                                                  ? () {
+                                                                      showDialog(
+                                                                        context:
+                                                                            context,
+                                                                        builder:
+                                                                            (alertDialogContext) =>
+                                                                                AlertDialog(
+                                                                          content:
+                                                                              const Wrap(
+                                                                            children: [
+                                                                              Center(
+                                                                                  child: Text(
+                                                                                "Do you want to delete the file",
+                                                                                style: TextStyle(color: Colors.red),
+                                                                              )),
+                                                                            ],
+                                                                          ),
+                                                                          actions: [
+                                                                            TextButton(
+                                                                                onPressed: () {
+                                                                                  Navigator.pop(context);
+                                                                                },
+                                                                                child: const Text("Cancel")),
+                                                                            TextButton(
+                                                                                onPressed: () {
+                                                                                  Navigator.pop(context);
+                                                                                  context.read<PIDetailBloc>().add(const DeleteUploadEvent(tagName: "Previous Policy"));
+                                                                                },
+                                                                                child: const Text("Delete")),
+                                                                          ],
+                                                                        ),
+                                                                      );
+                                                                    }
+                                                                  : null,
                                                           icon: const Icon(
                                                               Icons.delete),
                                                           color: Colors.red,
@@ -2470,53 +2463,55 @@ class _PIDetailScreenState extends State<PIDetailScreen> {
                                                     Row(
                                                       children: [
                                                         IconButton(
-                                                          onPressed: /* provider
+                                                          onPressed:
+                                                              isinvoicecopyuploaded
+                                                                  ? null
+                                                                  : /* provider
                                                                                     .isinvoicecopyupload
                                                                                 ? null
                                                                                 :  */
-                                                              () {
-                                                            context
-                                                                .read<
-                                                                    PIDetailBloc>()
-                                                                .add(const ShowBottomSheetEvent(
-                                                                    type:
-                                                                        "Invoice Copy"));
-                                                            // provider
-                                                            //         .isinvoicecopyupload
-                                                            //     ? showDialog(
-                                                            //         context:
-                                                            //             context,
-                                                            //         builder: (alertDialogContext) =>
-                                                            //             AlertDialog(
-                                                            //           content:
-                                                            //               const Wrap(
-                                                            //             children: [
-                                                            //               Center(
-                                                            //                   child: Text(
-                                                            //                 "Only 1 document is allowed. Please delete the existing file to upload a new one",
-                                                            //                 style: TextStyle(color: redcolor),
-                                                            //               )),
-                                                            //             ],
-                                                            //           ),
-                                                            //           actions: [
-                                                            //             TextButton(
-                                                            //                 onPressed: () {
-                                                            //                   Navigator.pop(context);
-                                                            //                 },
-                                                            //                 child: const Text("Cancel")),
-                                                            //             TextButton(
-                                                            //                 onPressed: () {
-                                                            //                   Navigator.pop(context);
-                                                            //                   provider.deleteinvoicecopy("Invoice Copy");
-                                                            //                 },
-                                                            //                 child: const Text("Delete")),
-                                                            //           ],
-                                                            //         ),
-                                                            //       )
-                                                            //     : provider.showbottomsheet(
-                                                            //         "Invoice Copy",
-                                                            //         context);
-                                                          },
+                                                                  () {
+                                                                      context
+                                                                          .read<
+                                                                              PIDetailBloc>()
+                                                                          .add(const ShowBottomSheetEvent(
+                                                                              type: "Invoice Copy"));
+                                                                      // provider
+                                                                      //         .isinvoicecopyupload
+                                                                      //     ? showDialog(
+                                                                      //         context:
+                                                                      //             context,
+                                                                      //         builder: (alertDialogContext) =>
+                                                                      //             AlertDialog(
+                                                                      //           content:
+                                                                      //               const Wrap(
+                                                                      //             children: [
+                                                                      //               Center(
+                                                                      //                   child: Text(
+                                                                      //                 "Only 1 document is allowed. Please delete the existing file to upload a new one",
+                                                                      //                 style: TextStyle(color: redcolor),
+                                                                      //               )),
+                                                                      //             ],
+                                                                      //           ),
+                                                                      //           actions: [
+                                                                      //             TextButton(
+                                                                      //                 onPressed: () {
+                                                                      //                   Navigator.pop(context);
+                                                                      //                 },
+                                                                      //                 child: const Text("Cancel")),
+                                                                      //             TextButton(
+                                                                      //                 onPressed: () {
+                                                                      //                   Navigator.pop(context);
+                                                                      //                   provider.deleteinvoicecopy("Invoice Copy");
+                                                                      //                 },
+                                                                      //                 child: const Text("Delete")),
+                                                                      //           ],
+                                                                      //         ),
+                                                                      //       )
+                                                                      //     : provider.showbottomsheet(
+                                                                      //         "Invoice Copy",
+                                                                      //         context);
+                                                                    },
                                                           icon: const Icon(
                                                               Icons.upload),
                                                           color: /*  provider
@@ -2526,68 +2521,42 @@ class _PIDetailScreenState extends State<PIDetailScreen> {
                                                               Colors.green,
                                                         ),
                                                         IconButton(
-                                                          onPressed: () {
-                                                            // if (provider
-                                                            //     .isinvoicecopyupload) {
-                                                            //   showDialog(
-                                                            //     context:
-                                                            //         context,
-                                                            //     builder:
-                                                            //         (alertDialogContext) =>
-                                                            //             AlertDialog(
-                                                            //       content:
-                                                            //           const Wrap(
-                                                            //         children: [
-                                                            //           Center(
-                                                            //               child: Text(
-                                                            //             "Do you want to delete the file",
-                                                            //             style: TextStyle(color: redcolor),
-                                                            //           )),
-                                                            //         ],
-                                                            //       ),
-                                                            //       actions: [
-                                                            //         TextButton(
-                                                            //             onPressed: () {
-                                                            //               Navigator.pop(context);
-                                                            //             },
-                                                            //             child: const Text("Cancel")),
-                                                            //         TextButton(
-                                                            //             onPressed: () {
-                                                            //               Navigator.pop(context);
-                                                            //               provider.deleteinvoicecopy("Invoice Copy");
-                                                            //             },
-                                                            //             child: const Text("Delete")),
-                                                            //       ],
-                                                            //     ),
-                                                            //   );
-                                                            // } else {
-                                                            //   showDialog(
-                                                            //     context:
-                                                            //         context,
-                                                            //     builder:
-                                                            //         (alertDialogContext) =>
-                                                            //             AlertDialog(
-                                                            //       content:
-                                                            //           const Wrap(
-                                                            //         children: [
-                                                            //           Center(
-                                                            //               child: Text(
-                                                            //             "No file available to delete",
-                                                            //             style: TextStyle(color: redcolor),
-                                                            //           )),
-                                                            //         ],
-                                                            //       ),
-                                                            //       actions: [
-                                                            //         TextButton(
-                                                            //             onPressed: () {
-                                                            //               Navigator.pop(context);
-                                                            //             },
-                                                            //             child: const Text("Ok")),
-                                                            //       ],
-                                                            //     ),
-                                                            //   );
-                                                            // }
-                                                          },
+                                                          onPressed:
+                                                              isinvoicecopyuploaded
+                                                                  ? () {
+                                                                      showDialog(
+                                                                        context:
+                                                                            context,
+                                                                        builder:
+                                                                            (alertDialogContext) =>
+                                                                                AlertDialog(
+                                                                          content:
+                                                                              const Wrap(
+                                                                            children: [
+                                                                              Center(
+                                                                                  child: Text(
+                                                                                "Do you want to delete the file",
+                                                                                style: TextStyle(color: Colors.red),
+                                                                              )),
+                                                                            ],
+                                                                          ),
+                                                                          actions: [
+                                                                            TextButton(
+                                                                                onPressed: () {
+                                                                                  Navigator.pop(context);
+                                                                                },
+                                                                                child: const Text("Cancel")),
+                                                                            TextButton(
+                                                                                onPressed: () {
+                                                                                  Navigator.pop(context);
+                                                                                  context.read<PIDetailBloc>().add(const DeleteUploadEvent(tagName: "Invoice Copy"));
+                                                                                },
+                                                                                child: const Text("Delete")),
+                                                                          ],
+                                                                        ),
+                                                                      );
+                                                                    }
+                                                                  : null,
                                                           icon: const Icon(
                                                               Icons.delete),
                                                           color: Colors.red,
@@ -2704,177 +2673,190 @@ class _PIDetailScreenState extends State<PIDetailScreen> {
                                                               : */
                                         Padding(
                                           padding: const EdgeInsets.all(10.0),
-                                          child: SizedBox(
-                                            height: 50,
-                                            width: MediaQuery.of(context)
-                                                .size
-                                                .width,
-                                            child: ElevatedButton(
-                                                onPressed: () {
-                                                  context
-                                                      .read<PIDetailBloc>()
-                                                      .add(
-                                                          PIDetailsSaveApiEvent(
-                                                        /// add this
-                                                        branchPartyId:
-                                                            branchCode,
+                                          child: Visibility(
+                                            visible: !context
+                                                        .read<PIDetailBloc>()
+                                                        .isPiSubmitted ||
+                                                    currentstatustextcontoller
+                                                            .text ==
+                                                        "Report Pending"
+                                                ? false
+                                                : true,
+                                            child: SizedBox(
+                                              height: 50,
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              child: ElevatedButton(
+                                                  onPressed: () {
+                                                    context
+                                                        .read<PIDetailBloc>()
+                                                        .add(
+                                                            PIDetailsSaveApiEvent(
+                                                          /// add this
+                                                          branchPartyId:
+                                                              branchCode,
 
-                                                        /// addd this
-                                                        surveyorPartyId: userId,
-                                                        productType:
-                                                            producttextcontoller
-                                                                .text,
-                                                        productCategory:
-                                                            vehiclecategorytextcontoller
-                                                                .text,
-                                                        vehicleType:
-                                                            vehicleTypetextcontoller
-                                                                .text,
-                                                        registrationFormat: widget
-                                                                .ownflow
-                                                            ? ""
-                                                            : registrationnumberformattextcontoller
-                                                                .text,
-                                                        registrationNo:
-                                                            "${r1textcontoller.text.trim()}-${r2textcontoller.text.trim()}-${r3textcontoller.text.trim()}-${r4textcontoller.text.trim()}",
-                                                        engineNo:
-                                                            enginenumbertextcontoller
-                                                                .text,
-                                                        chassisNo:
-                                                            chassisnumbertextcontoller
-                                                                .text,
-                                                        make: maketextcontoller
-                                                            .text,
-                                                        model:
-                                                            modeltextcontoller
-                                                                .text,
-                                                        yearOfManufacturing:
-                                                            yearofmanuftextcontoller
-                                                                .text,
-                                                        fueltype:
-                                                            fueltypetextcontoller
-                                                                .text,
-                                                        inspectionLocation:
-                                                            inspectionlocationtextcontoller
-                                                                .text,
-                                                        contactPerson:
-                                                            contactpersontextcontoller
-                                                                .text,
-                                                        contactMobileNo:
-                                                            contactmobienumbertextcontoller
-                                                                .text,
-                                                        insuredName:
-                                                            insurednametextcontoller
-                                                                .text,
-                                                        piPurpose:
-                                                            pipurposetextcontoller
-                                                                .text,
-                                                        endorsementType:
-                                                            endoresementtypetextcontoller
-                                                                .text,
-                                                        policyNo:
-                                                            policynumbertextcontoller
-                                                                .text,
-                                                        ncbPercentage:
-                                                            ncbtextcontoller
-                                                                .text,
-                                                        contactNoforSms:
-                                                            contactnoforsmstextcontoller
-                                                                .text,
-                                                        intimationRemarks: widget
-                                                                .ownflow
-                                                            ? "SELF PI"
-                                                            : intimationstatustextcontoller
-                                                                .text,
+                                                          /// addd this
+                                                          surveyorPartyId:
+                                                              userId,
+                                                          productType:
+                                                              producttextcontoller
+                                                                  .text,
+                                                          productCategory:
+                                                              vehiclecategorytextcontoller
+                                                                  .text,
+                                                          vehicleType:
+                                                              vehicleTypetextcontoller
+                                                                  .text,
+                                                          registrationFormat:
+                                                              widget.ownflow
+                                                                  ? ""
+                                                                  : registrationnumberformattextcontoller
+                                                                      .text,
+                                                          registrationNo:
+                                                              "${r1textcontoller.text.trim()}-${r2textcontoller.text.trim()}-${r3textcontoller.text.trim()}-${r4textcontoller.text.trim()}",
+                                                          engineNo:
+                                                              enginenumbertextcontoller
+                                                                  .text,
+                                                          chassisNo:
+                                                              chassisnumbertextcontoller
+                                                                  .text,
+                                                          make:
+                                                              maketextcontoller
+                                                                  .text,
+                                                          model:
+                                                              modeltextcontoller
+                                                                  .text,
+                                                          yearOfManufacturing:
+                                                              yearofmanuftextcontoller
+                                                                  .text,
+                                                          fueltype:
+                                                              fueltypetextcontoller
+                                                                  .text,
+                                                          inspectionLocation:
+                                                              inspectionlocationtextcontoller
+                                                                  .text,
+                                                          contactPerson:
+                                                              contactpersontextcontoller
+                                                                  .text,
+                                                          contactMobileNo:
+                                                              contactmobienumbertextcontoller
+                                                                  .text,
+                                                          insuredName:
+                                                              insurednametextcontoller
+                                                                  .text,
+                                                          piPurpose:
+                                                              pipurposetextcontoller
+                                                                  .text,
+                                                          endorsementType:
+                                                              endoresementtypetextcontoller
+                                                                  .text,
+                                                          policyNo:
+                                                              policynumbertextcontoller
+                                                                  .text,
+                                                          ncbPercentage:
+                                                              ncbtextcontoller
+                                                                  .text,
+                                                          contactNoforSms:
+                                                              contactnoforsmstextcontoller
+                                                                  .text,
+                                                          intimationRemarks: widget
+                                                                  .ownflow
+                                                              ? "SELF PI"
+                                                              : intimationstatustextcontoller
+                                                                  .text,
 
-                                                        /// add this
-                                                        userPartyId: userId,
-                                                        sourceFrom:
-                                                            "I-Nova", // TODO ASK
-                                                        /// add this
-                                                        loginId: userMailId,
-                                                        idvofvehicle:
-                                                            idvtextcontoller
-                                                                .text,
-                                                        proposalType:
-                                                            proposaltypetextcontoller
-                                                                .text,
-                                                        sgicPolicyNumber:
-                                                            sgicpolicynumbertextcontoller
-                                                                .text,
-                                                        engineprotectorcover:
-                                                            epcrtextcontoller
-                                                                .text,
-                                                        contactnoToSendlink:
-                                                            selfpitextcontoller
-                                                                .text,
-                                                        gvw: gvwtextcontoller
-                                                            .text,
-                                                        seatingcapacity:
-                                                            seatingCapcitytextcontoller
-                                                                .text,
+                                                          /// add this
+                                                          userPartyId: userId,
+                                                          sourceFrom:
+                                                              "I-Nova", // TODO ASK
+                                                          /// add this
+                                                          loginId: userMailId,
+                                                          idvofvehicle:
+                                                              idvtextcontoller
+                                                                  .text,
+                                                          proposalType:
+                                                              proposaltypetextcontoller
+                                                                  .text,
+                                                          sgicPolicyNumber:
+                                                              sgicpolicynumbertextcontoller
+                                                                  .text,
+                                                          engineprotectorcover:
+                                                              epcrtextcontoller
+                                                                  .text,
+                                                          contactnoToSendlink:
+                                                              selfpitextcontoller
+                                                                  .text,
+                                                          gvw: gvwtextcontoller
+                                                              .text,
+                                                          seatingcapacity:
+                                                              seatingCapcitytextcontoller
+                                                                  .text,
 
-                                                        /// add this
-                                                        requestPifilesuploadObj: [],
-                                                        attachmentId:
-                                                            "", // TODO ASK
-                                                        preInspectionId:
-                                                            "", // TODO ASK
-                                                        title:
-                                                            prefixtextcontoller
-                                                                .text,
-                                                        odometerReading:
-                                                            odometertextcontoller
-                                                                .text,
-                                                        agencyStatus:
-                                                            preinspectionstatustextcontoller
-                                                                .text, // TODO ASK ///add this
-                                                        rcVerified: widget
-                                                                .ownflow
-                                                            ? rcverifiedtextcontoller
-                                                                        .text ==
-                                                                    "Yes"
-                                                                ? "1"
-                                                                : "0"
-                                                            : "",
-                                                        surveyorRemark:
-                                                            surveyorremarkstextcontoller
-                                                                .text,
-                                                        vehRunningCondition: widget
-                                                                .ownflow
-                                                            ? vehiclerunningconditiontextcontoller
-                                                                        .text ==
-                                                                    "Yes"
-                                                                ? "Y"
-                                                                : "N"
-                                                            : "",
-                                                        piFeesAmount:
-                                                            pifeeamounttextcontoller
-                                                                .text,
-                                                        conveyanceAmount:
-                                                            conveyanceamounttextcontoller
-                                                                .text,
-                                                        modeofPayment:
-                                                            modeofpaymenttextcontoller
-                                                                .text,
-                                                        referenceNumber:
-                                                            "", // TODO ASK
-                                                        piFeesCollected:
-                                                            pifeecollectedtextcontoller
-                                                                .text,
-                                                        branch:
-                                                            branchnametextcontoller
-                                                                .text,
-                                                      ));
-                                                  // provider.ifelsecondigtionforsubmit(
-                                                  //     widget.ownpi,
-                                                  //     widget
-                                                  //         .otherpi,
-                                                  //     widget
-                                                  //         .ishitapi,
-                                                  //     context);
-                                                },
-                                                child: const Text("Submit")),
+                                                          /// add this
+                                                          requestPifilesuploadObj:
+                                                              requestPifilesuploadObjlist,
+                                                          attachmentId:
+                                                              "", // TODO ASK
+                                                          preInspectionId:
+                                                              "", // TODO ASK
+                                                          title:
+                                                              prefixtextcontoller
+                                                                  .text,
+                                                          odometerReading:
+                                                              odometertextcontoller
+                                                                  .text,
+                                                          agencyStatus:
+                                                              preinspectionstatustextcontoller
+                                                                  .text, // TODO ASK ///add this
+                                                          rcVerified: widget
+                                                                  .ownflow
+                                                              ? rcverifiedtextcontoller
+                                                                          .text ==
+                                                                      "Yes"
+                                                                  ? "1"
+                                                                  : "0"
+                                                              : "",
+                                                          surveyorRemark:
+                                                              surveyorremarkstextcontoller
+                                                                  .text,
+                                                          vehRunningCondition: widget
+                                                                  .ownflow
+                                                              ? vehiclerunningconditiontextcontoller
+                                                                          .text ==
+                                                                      "Yes"
+                                                                  ? "Y"
+                                                                  : "N"
+                                                              : "",
+                                                          piFeesAmount:
+                                                              pifeeamounttextcontoller
+                                                                  .text,
+                                                          conveyanceAmount:
+                                                              conveyanceamounttextcontoller
+                                                                  .text,
+                                                          modeofPayment:
+                                                              modeofpaymenttextcontoller
+                                                                  .text,
+                                                          referenceNumber:
+                                                              "", // TODO ASK
+                                                          piFeesCollected:
+                                                              pifeecollectedtextcontoller
+                                                                  .text,
+                                                          branch:
+                                                              branchnametextcontoller
+                                                                  .text,
+                                                        ));
+                                                    // provider.ifelsecondigtionforsubmit(
+                                                    //     widget.ownpi,
+                                                    //     widget
+                                                    //         .otherpi,
+                                                    //     widget
+                                                    //         .ishitapi,
+                                                    //     context);
+                                                  },
+                                                  child: const Text("Submit")),
+                                            ),
                                           ),
                                         ),
                                         const SizedBox(

@@ -100,7 +100,11 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
               ownflow: false);
         },
       ),
-    );
+    ) /* .then((value) {
+      event.context.read<DashboardBloc>().add(const LoginApiEvent(
+          userId: "abhinaw.sgi@gmail.com", password: "cherry123"));
+    }) */
+        ;
     // emit(DashboardLoadingState());
     // emit(NavigateToPIDetailScreenState(preInspectionId: event.preInspectionId, isHitApi: event.isHitApi));
   }

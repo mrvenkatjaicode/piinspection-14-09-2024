@@ -32,7 +32,7 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
   List<bool> isImageUploaded = [];
   List<String> imageUrl = [];
   List<Tuple2<String?, String?>?> tabNameList = [];
-
+  List<bool> isImageAvilable = [];
   List<Tuple3<String?, String?, String?>?> commonStrings = [];
 
   static String videoPath = "";
@@ -76,23 +76,36 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
   }
 
   Widget _buildVideoRecordingContent(bool existsInTabData) {
-    if (commonStrings.isNotEmpty &&
-        existsInTabData &&
-        commonStrings.length > tabController!.index) {
-      return InkWell(
-        onTap: () {
-          debugPrint(commonStrings[tabController!.index]!.item2 ?? "");
-          launchUrl(Uri.parse(commonStrings[tabController!.index]!.item2 ?? ""),
-              mode: LaunchMode.externalApplication);
-          //  OpenFilex.open(videoPath);
-          debugPrint(videoPath);
-        },
-        child: Image.asset(
-          'assest/bikeicon.png',
-          width: MediaQuery.of(context).size.width * 1.5,
-          height: MediaQuery.of(context).size.height,
-          fit: BoxFit.contain,
-        ),
+    if (commonStrings.isNotEmpty && existsInTabData /*  && */
+        /* commonStrings.length > tabController!.index */ /* tabController!
+                .index >=
+            commonStrings.length */
+        ) {
+      for (int i = 0; i < commonStrings.length; i++) {
+        if (tabName == commonStrings[i]!.item1) {
+          // If tabName matches item1, return the network image
+          return InkWell(
+            onTap: () {
+              debugPrint(commonStrings[i]!.item2 ?? "");
+              launchUrl(Uri.parse(commonStrings[i]!.item2 ?? ""),
+                  mode: LaunchMode.externalApplication);
+              //  OpenFilex.open(videoPath);
+              debugPrint(videoPath);
+            },
+            child: Image.asset(
+              'assest/playvideo.png',
+              width: MediaQuery.of(context).size.width * 1.5,
+              height: MediaQuery.of(context).size.height,
+              fit: BoxFit.contain,
+            ),
+          );
+        }
+      }
+      return Image.asset(
+        'assest/addvideo.png',
+        width: MediaQuery.of(context).size.width * 1.5,
+        height: MediaQuery.of(context).size.height,
+        fit: BoxFit.contain,
       );
     } else if (isImageUploaded.isNotEmpty &&
         isImageUploaded[tabController!.index]) {
@@ -105,7 +118,7 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
           debugPrint(videoPath);
         },
         child: Image.asset(
-          'assest/bikeicon.png',
+          'assest/playvideo.png',
           width: MediaQuery.of(context).size.width * 1.5,
           height: MediaQuery.of(context).size.height,
           fit: BoxFit.contain,
@@ -236,20 +249,42 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
   }
 
   Widget _buildDefaultContent(int itemIndex, bool existsInTabData) {
+    // Check if commonStrings is not empty, existsInTabData is true,
+    // and itemIndex is within bounds
     if (commonStrings.isNotEmpty &&
         existsInTabData &&
-        commonStrings.length > tabController!.index) {
-      return _buildImageFromNetwork(
-          commonStrings[tabController!.index]!.item2 ?? "");
-    } else if (isImageUploaded.isNotEmpty &&
-        isImageUploaded[tabController!.index]) {
-      return _buildImageFromNetwork(imageUrl[tabController!.index]);
-    } else {
+        isImageAvilable[tabController!.index] &&
+        itemIndex <= commonStrings.length &&
+        tabController!.index <= commonStrings.length) {
+      // Iterate over commonStrings
+      for (int i = 0; i < commonStrings.length; i++) {
+        if (tabName == commonStrings[i]!.item1) {
+          // If tabName matches item1, return the network image
+          return _buildImageFromNetwork(commonStrings[i]!.item2 ?? "");
+        }
+      }
+      // If no match is found, return the decoded image from tabDetails
       return Image.memory(
         base64Decode(tabDetails[itemIndex].split(":")[1]),
         width: MediaQuery.of(context).size.width * 3.5,
         height: MediaQuery.of(context).size.height / 2,
       );
+    } else if (isImageUploaded.isNotEmpty &&
+        isImageAvilable[tabController!.index] &&
+        tabController!.index < isImageUploaded.length &&
+        isImageUploaded[tabController!.index]) {
+      // If an image has been uploaded, return the network image
+      return _buildImageFromNetwork(imageUrl[tabController!.index]);
+    } else if (itemIndex < tabDetails.length) {
+      // Ensure itemIndex is within bounds of tabDetails, then return the decoded image
+      return Image.memory(
+        base64Decode(tabDetails[itemIndex].split(":")[1]),
+        width: MediaQuery.of(context).size.width * 3.5,
+        height: MediaQuery.of(context).size.height / 2,
+      );
+    } else {
+      // Return a default placeholder or error widget if all conditions fail
+      return const Text("Content not available");
     }
   }
 
@@ -281,10 +316,11 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
           pageController = state.pageController;
           tabController = state.tabController;
           isImageUploaded = List.filled(tabDetails.length, false);
+          isImageAvilable = List.filled(tabDetails.length, false);
           imageUrl = List.filled(tabDetails.length, "");
         } else if (state is FinalSubmitAPIState) {
           Navigator.pop(context);
-          Navigator.pop(context);
+          Navigator.pop(context, true);
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.resMsg),
@@ -304,6 +340,7 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
           for (int i = 0; i < tabDetails.length; i++) {
             tabNameList.add(Tuple2(tabDetails[i].split(":")[0],
                 "" /* tabDetails[i].split(":")[1] */));
+            isImageAvilable[i] = true;
           }
           List<Tuple3<String?, String?, String?>?> apiName = [];
           for (int i = 0;
@@ -352,7 +389,7 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
             }
           }
 
-          debugPrint(commonStrings.toString());
+          // debugPrint(commonStrings.toString());
         } else if (state is NextPageState) {
           tabController!.index = state.index;
           tabName = state.tabName;
@@ -388,6 +425,7 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
                 ),
                 ElevatedButton(
                   onPressed: () {
+                    isImageAvilable[tabController!.index] = false;
                     Navigator.pop(context);
                     context.read<PreInspectionBloc>().add(DeleteFileApiEvent(
                         userPartyId: '',
@@ -400,6 +438,16 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
               ],
             ),
           );
+        } else if (state is DeleteFileApiState) {
+          debugPrint(tabController!.index.toString());
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                  state.deleteApiResponse.messageResult!.successMessage ?? ""),
+              backgroundColor: Colors.green,
+            ),
+          );
+          // context.read<PreInspectionBloc>().add(GetImageFromApiEvent());
         } else if (state is FileUploadedSuccessfully) {
           debugPrint("FileUploadedSuccessfully");
           context.read<PreInspectionBloc>().add(ShrigenUploadApiEvent(
@@ -423,9 +471,9 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
                       commonStrings.length > tabController!.index) ||
                   (isImageUploaded.isNotEmpty &&
                       isImageUploaded[tabController!.index])) {
-            context
-                .read<PreInspectionBloc>()
-                .add(FileAlreadyUploadedEvent(uniqueFileName: fileUniqueName));
+            context.read<PreInspectionBloc>().add(FileAlreadyUploadedEvent(
+                uniqueFileName:
+                    commonStrings[tabController!.index]!.item3 ?? ""));
           } else {
             state.imageType == "Doc"
                 ? context.read<PreInspectionBloc>().add(TakeDocumentEvent(
@@ -507,6 +555,8 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
                             unselectedLabelColor: Colors.black26,
                             tabs: List<Widget>.generate(tabDetails.length,
                                 (int index) {
+                              // debugPrint(
+                              //     " ${tabDetails[index].split(":")[0]} - ${isImageAvilable[index].toString()} ");
                               return Tab(
                                 child: Text(
                                   tabDetails[index].split(":")[0],

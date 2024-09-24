@@ -1,5 +1,6 @@
 // pi_detail_state.dart
 import 'package:equatable/equatable.dart';
+import 'package:mnovapi/models/pi_detail/pi_detail_save_model.dart';
 import 'package:tuple/tuple.dart';
 
 import '../../models/pi_detail/pi_detail_model.dart';
@@ -10,6 +11,14 @@ abstract class PIDetailState extends Equatable {
 
   @override
   List<Object> get props => [];
+}
+
+class DeleteUploadState extends PIDetailState {
+  final String tagName;
+  final List<RequestPifilesuploadObj> requestPifilesuploadObjlist;
+
+  const DeleteUploadState(
+      {required this.tagName, required this.requestPifilesuploadObjlist});
 }
 
 class PIDetailInitial extends PIDetailState {}
@@ -271,10 +280,13 @@ class FileAlreadyUploaded extends PIDetailState {
   const FileAlreadyUploaded(this.tagName);
 }
 
+class PIDetailSubmitState extends PIDetailState{}
+
 class FileUploadedSuccessfully extends PIDetailState {
   final String tagName;
+  final List<RequestPifilesuploadObj> requestPifilesuploadObjlist;
 
-  const FileUploadedSuccessfully(this.tagName);
+  const FileUploadedSuccessfully(this.tagName, this.requestPifilesuploadObjlist);
 }
 
 class NoFilePicked extends PIDetailState {}

@@ -133,8 +133,1962 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
     on<YearSelectedEvent>(yearSelected);
     on<PISubmitEvent>(getPiSubmit);
     on<NavigateToNcxtScreenEvent>(navigatetonxtscreen);
+    on<DeleteUploadEvent>(deleteUpload);
   }
 
+  validateTextfield(PIDetailsSaveApiEvent event, Emitter<PIDetailState> emit){
+// ownpi, otherpi, ishitapi, context
+  
+    if (event.branch.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(color: redcolor, fontSize: 20),
+            ),
+          ),
+          content: const Text(
+            "Select Branch Name",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                Scrollable.ensureVisible(branchnameKey.currentContext!);
+                Provider.of<DropDownListNotifier>(context, listen: false)
+                    .getBranchName(
+                        Provider.of<LoginFlowScreenNotifier>(context,
+                                listen: false)
+                            .partid
+                            .toString(),
+                        branchnamecontroller,
+                        context);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (event.surveyorPartyId.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Enter Surveyor Name",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context).requestFocus(focussurveyorname);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (event.productType.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Select Product",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                Provider.of<DropDownListNotifier>(context, listen: false)
+                    .getloadcombo(
+                        Provider.of<LoginFlowScreenNotifier>(context,
+                                listen: false)
+                            .partid
+                            .toString(),
+                        false,
+                        "Product",
+                        productcontroller,
+                        context);
+                Scrollable.ensureVisible(productkey.currentContext!);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (isShowVehicleCategory &&
+        event.productCategory.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Select Vehicle Category",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                Provider.of<DropDownListNotifier>(context, listen: false)
+                    .getvehcategory(
+                        Provider.of<LoginFlowScreenNotifier>(context,
+                                listen: false)
+                            .partid
+                            .toString(),
+                        productCode,
+                        vehiclecategorycontroller,
+                        context);
+                Scrollable.ensureVisible(vehiclecategorykey.currentContext!);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (isShowSeatingCapacity &&
+        event.seatingcapacity.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Select Seating Capacity",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                Provider.of<DropDownListNotifier>(context, listen: false)
+                    .getSeatingCapacity(seatingcapacitycontroller, context);
+                Scrollable.ensureVisible(seatingcapacitykey.currentContext!);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (isShowgvw && event.gvw.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Select GVW",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                Provider.of<DropDownListNotifier>(context, listen: false)
+                    .getGvw(gvwcontroller, context);
+                Scrollable.ensureVisible(gvwkey.currentContext!);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (event.piPurpose.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Select PI Purpose",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                Scrollable.ensureVisible(pipurposekey.currentContext!);
+                if (productcontroller.text == "PCCV") {
+                  if (vehiclecategorycontroller.text == "") {
+                    showDialog(
+                      context: context,
+                      builder: (alertDialogContext) => const AlertDialog(
+                        content: SizedBox(
+                            height: 60,
+                            width: 60,
+                            child: Center(
+                                child: Text(
+                                    "Please Select Vehicle Category First"))),
+                      ),
+                    );
+                  } else {
+                    Provider.of<DropDownListNotifier>(context, listen: false)
+                        .getloadcombo(
+                            Provider.of<LoginFlowScreenNotifier>(context,
+                                    listen: false)
+                                .partid
+                                .toString(),
+                            false,
+                            "PI Purpose",
+                            pipuposecontroller,
+                            context);
+                  }
+                } else {
+                  productcontroller.text == ""
+                      ? showDialog(
+                          context: context,
+                          builder: (alertDialogContext) => const AlertDialog(
+                            content: SizedBox(
+                                height: 60,
+                                width: 60,
+                                child: Center(
+                                    child: Text(
+                                        "Please Select Product List First"))),
+                          ),
+                        )
+                      : Provider.of<DropDownListNotifier>(context,
+                              listen: false)
+                          .getloadcombo(
+                              Provider.of<LoginFlowScreenNotifier>(context,
+                                      listen: false)
+                                  .partid
+                                  .toString(),
+                              false,
+                              "PI Purpose",
+                              pipuposecontroller,
+                              context);
+                }
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (isShowEndorsementType &&
+        event.endorsementType.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Select Endoresement Type",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                Provider.of<DropDownListNotifier>(context, listen: false)
+                    .getloadcombo(
+                        Provider.of<LoginFlowScreenNotifier>(context,
+                                listen: false)
+                            .partid
+                            .toString(),
+                        false,
+                        "Endorsement Type",
+                        endorsementtypecontroller,
+                        context);
+                Scrollable.ensureVisible(endoresementtypekey.currentContext!);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (isShowEndorsementType && event.policyNo.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Enter Policy Number",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context).requestFocus(focuspolicynumber);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (event.productType  == "PRIVATE CAR" &&
+        (event.piPurpose == "Nil Dep." ||
+           event.piPurpose  == "Break-In with Nil Dep.") &&
+        event.engineprotectorcover.isEmpty) {
+      // TODO ONLY FOR PRVIATE CAR
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Select Engine Protector Cover",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                showprotectorcoverselectvalue();
+                Scrollable.ensureVisible(
+                    engineprotectorcoverkey.currentContext!);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (event.make.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Select Make",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                Provider.of<DropDownListNotifier>(context, listen: false)
+                    .getmake(
+                        Provider.of<LoginFlowScreenNotifier>(context,
+                                listen: false)
+                            .partid
+                            .toString(),
+                        productCode,
+                        makecontroller,
+                        context);
+                Scrollable.ensureVisible(makekey.currentContext!);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (event.model.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Select Model",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                Provider.of<DropDownListNotifier>(context, listen: false)
+                    .getmodel(
+                        Provider.of<LoginFlowScreenNotifier>(context,
+                                listen: false)
+                            .partid
+                            .toString(),
+                        productCode,
+                        makeCode,
+                        modelcontroller,
+                        context);
+                Scrollable.ensureVisible(modelkey.currentContext!);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (event.fueltype.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Select Fuel Type",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                Provider.of<DropDownListNotifier>(context, listen: false)
+                    .getloadcombo(
+                        Provider.of<LoginFlowScreenNotifier>(context,
+                                listen: false)
+                            .partid
+                            .toString(),
+                        false,
+                        "Fuel Type",
+                        fueltypecontroller,
+                        context);
+                Scrollable.ensureVisible(fueltypekey.currentContext!);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (event.vehicleType == "Old" &&
+        selectedregistrationtypeRadio == 1 &&
+     event.r   rtocodecontroller.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Enter RTO Code",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context).requestFocus(focusrtocode);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (event.vehicleType  == "Old" &&
+        selectedregistrationtypeRadio == 1 &&
+        rtonamecontroller.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Enter RTO Code",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context).requestFocus(focusrtocode);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (selectedregistrationtypeRadio == 2 &&
+        regisnumberonecontroller.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Enter Registration Number",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context).requestFocus(focusregisnumberone);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (vehicletypecontroller.text == "Old" &&
+        selectedregistrationtypeRadio == 1 &&
+        regisnumberthreecontroller.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Enter Registration Number",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context).requestFocus(focusregisnumberthree);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (selectedregistrationtypeRadio == 2 &&
+        regisnumberthreecontroller.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Enter Registration Number",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context).requestFocus(focusregisnumberthree);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (selectedregistrationtypeRadio == 2 &&
+        regisnumberthreecontroller.text.isNotEmpty &&
+        regisnumberthreecontroller.text.length < 4) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Enter 4 Digits In Registration Number",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context).requestFocus(focusregisnumberthree);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (vehicletypecontroller.text == "New" &&
+        selectedregistrationtypeRadio == 2 &&
+        regisnumberthreecontroller.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Enter Registration Number",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context).requestFocus(focusregisnumberthree);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } /*  else if (regisnumberfourcontroller.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                  color: redcolor, fontSize: 20, ),
+            ),
+          ),
+          content: const Text(
+            "Enter Registration Number",
+            style: TextStyle(, fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context)
+                    .requestFocus(focusregistrationfournumber);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } */
+    else if (vehicletypecontroller.text == "Old" &&
+        selectedregistrationtypeRadio == 1 &&
+        regisnumberfourcontroller.text.isNotEmpty &&
+        regisnumberfourcontroller.text.length < 4) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Enter 4 Digits Registration Number",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context)
+                    .requestFocus(focusregistrationfournumber);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (vehicletypecontroller.text == "Old" &&
+        selectedregistrationtypeRadio == 1 &&
+        regisnumberfourcontroller.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Enter Registration Number",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context)
+                    .requestFocus(focusregistrationfournumber);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if ((vehicletypecontroller.text == "Old" ||
+            vehicletypecontroller.text == "New") &&
+        selectedregistrationtypeRadio == 2 &&
+        regisnumberfourcontroller.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Enter Registration Number",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context)
+                    .requestFocus(focusregistrationfournumber);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (yearofmanucontroller.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Select Year of Manufacturing",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                showYearPicker(context);
+                Scrollable.ensureVisible(
+                    yearofmanufacturingkey.currentContext!);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (vehicletypecontroller.text == "New" &&
+        selectedregistrationtypeRadio == 1 &&
+        enginenumbercontroller.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Enter Engine Number",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context).requestFocus(focusenginenumber);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (enginenumbercontroller.text.isNotEmpty &&
+        enginenumbercontroller.text.length < 7) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Engine number should be 7 characters",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context).requestFocus(focusenginenumber);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (vehicletypecontroller.text == "New" &&
+        selectedregistrationtypeRadio == 1 &&
+        chassisnumbercontroller.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Enter Chassis Number",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context).requestFocus(focuschassisnumber);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (chassisnumbercontroller.text.isNotEmpty &&
+        chassisnumbercontroller.text.length < 7) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Chassis number should be 7 characters",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context).requestFocus(focuschassisnumber);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (otherpi && contactpersoncontroller.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Enter Contact Person",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context).requestFocus(focuscontactperson);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (otherpi && contactmobilenumbercontroller.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Enter Contact Mobile Number",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context).requestFocus(focuscontactmobilenumber);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (otherpi &&
+        contactmobilenumbercontroller.text.isNotEmpty &&
+        contactmobilenumbercontroller.text.length < 10) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Enter 10 Digits Contact Mobile Number",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context).requestFocus(focuscontactmobilenumber);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (prefixcontroller.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Select Prefix",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                Provider.of<DropDownListNotifier>(context, listen: false)
+                    .getPrefix(prefixcontroller, context);
+                Scrollable.ensureVisible(prefixkey.currentContext!);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (insurednamecontroller.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Enter Insured Name",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context).requestFocus(focusinsuredname);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (proposaltypecontroller.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Select Proposal Type",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                Provider.of<DropDownListNotifier>(context, listen: false)
+                    .getProposaltype(proposaltypecontroller, context);
+                Scrollable.ensureVisible(proposaltypekey.currentContext!);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if ((ownpi || ishitapi) && odometercontroller.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Enter Odometer Reading",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context).requestFocus(focusodometer);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if ((ownpi || ishitapi) && preinsstatuscontroller.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Select Pre-Inspection Status",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                Provider.of<DropDownListNotifier>(context, listen: false)
+                    .getPreinspectionStatus(preinsstatuscontroller, context);
+                Scrollable.ensureVisible(
+                    preinspectionstatuskey.currentContext!);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (ncbcontroller.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Select NCB %",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                Provider.of<DropDownListNotifier>(context, listen: false)
+                    .geteligibleNcb(ncbcontroller, context);
+                Scrollable.ensureVisible(ncbkey.currentContext!);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (dentedpartscontroller.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Enter Dented Parts",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context).requestFocus(focusdentedparts);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (scratchedpartscontroller.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Enter Scratched Parts",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context).requestFocus(focusscratchedparts);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (brokenpartscontroller.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Enter Broken Parts",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context).requestFocus(focusbrokenparts);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (ownpi && surveyorremarkscontroller.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Enter Surveyor Remarks",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context).requestFocus(focussurveyorremarks);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (ownpi &&
+        ispifeescollected &&
+        pifeeamountcontroller.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Enter PI Fee Amount",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context).requestFocus(focuspifeeamount);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (ownpi &&
+        ispifeescollected &&
+        conveyanceamountcontroller.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Enter Conveyance Amount",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context).requestFocus(focusconveyanceamount);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (ownpi &&
+        ispifeescollected &&
+        modeofpaymentcontroller.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Select Mode Of Payment",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                Provider.of<DropDownListNotifier>(context, listen: false)
+                    .getpaymentmode(modeofpaymentcontroller, context);
+                Scrollable.ensureVisible(modeofpaymentkey.currentContext!);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (isshowsgicpolicynumber &&
+        sgicpolicynumbercontroller.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Enter SGIC Policy Number",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context).requestFocus(focussgicpolicynumber);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (productcontroller.text == "PCCV" &&
+        vehiclecategorycontroller.text ==
+            "PCCV-2 wheelers - carrying passengers" &&
+        idvcontroller.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Enter IDV",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context).requestFocus(focusidv);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (productcontroller.text == "MOTORISED-TWO WHEELERS" &&
+        idvcontroller.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Enter IDV",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context).requestFocus(focusidv);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (otherpi && contactnoforsmscontroller.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Enter Contact Number for SMS",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context).requestFocus(focuscontactnumberforsms);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (otherpi &&
+        contactnoforsmscontroller.text.isNotEmpty &&
+        contactnoforsmscontroller.text.length < 10) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Enter 10 Digits Contact Number for SMS",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context).requestFocus(focuscontactnumberforsms);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (otherpi && intimationremarkscontroller.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Enter Intimation Remarks",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context).requestFocus(focusintimationremarks);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (otherpi &&
+        contactnotosendlinkforselfpicontroller.text.isNotEmpty &&
+        contactnotosendlinkforselfpicontroller.text.length < 10) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Enter 10 digits Contact Number to Send link for self PI",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context)
+                    .requestFocus(focuscontactnumbertosendlinkforselfpi);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (otherpi && contactnotosendlinkforselfpicontroller.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (alertDialogContext) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          title: const Center(
+            child: Text(
+              "Data Missing",
+              style: TextStyle(
+                color: redcolor,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          content: const Text(
+            "Enter Contact Number to Send link for self PI",
+            style: TextStyle(fontSize: 18),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(alertDialogContext);
+                FocusScope.of(context)
+                    .requestFocus(focuscontactnumbertosendlinkforselfpi);
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        ),
+      );
+    } else if (proposaltypecontroller.text == "Market Renewal" ||
+        proposaltypecontroller.text == "Own Renewal") {
+      if (isrccopyupload && (ispreviouspolicyupload || isinvoicecopyupload)) {
+        if (ownpi) {
+          getpiownsave(
+              Provider.of<LoginFlowScreenNotifier>(context, listen: false)
+                  .partid
+                  .toString(),
+              ownpi,
+              context);
+        } else if (otherpi) {
+          getpiownsave(
+              Provider.of<PIDetailScreenNotifier>(context, listen: false)
+                  .othersurveyerpartyid
+                  .toString(),
+              ownpi,
+              context);
+        } else {
+          branchid = pidetailsresponse.response![0].branchid.toString();
+          proinspectionid =
+              pidetailsresponse.response![0].preinspectionid.toString();
+          getpiownupdate(
+              Provider.of<LoginFlowScreenNotifier>(context, listen: false)
+                  .partid
+                  .toString(),
+              ownpi,
+              context);
+        }
+      } else {
+        if (intimationstatus == "Survey On Hold" ||
+            intimationstatus == "Request Assign to Surveyor") {
+          branchid = pidetailsresponse.response![0].branchid.toString();
+          proinspectionid =
+              pidetailsresponse.response![0].preinspectionid.toString();
+          getpiownupdate(
+              Provider.of<LoginFlowScreenNotifier>(context, listen: false)
+                  .partid
+                  .toString(),
+              ownpi,
+              context);
+        } else {
+          showDialog(
+            context: context,
+            builder: (alertDialogContext) => AlertDialog(
+              content: SizedBox(
+                  height: 60,
+                  width: 60,
+                  child: Center(
+                      child: Text(
+                    isrccopyupload
+                        ? "Please upload Previous Policy/Invoice copy"
+                        : ispreviouspolicyupload
+                            ? "Please upload Rc Copy"
+                            : "Please upload Rc Copy or Previous Policy/Invoice copy",
+                    style: const TextStyle(color: redcolor),
+                  ))),
+            ),
+          );
+        }
+      }
+    } else if (proposaltypecontroller.text ==
+        "Market Renewal without previous insurance") {
+      if (isrccopyupload) {
+        if (ownpi) {
+          getpiownsave(
+              Provider.of<LoginFlowScreenNotifier>(context, listen: false)
+                  .partid
+                  .toString(),
+              ownpi,
+              context);
+        } else if (otherpi) {
+          getpiownsave(
+              Provider.of<PIDetailScreenNotifier>(context, listen: false)
+                  .othersurveyerpartyid
+                  .toString(),
+              ownpi,
+              context);
+        } else {
+          //TODO - UPDATE
+          getpiownsave(
+              Provider.of<PIDetailScreenNotifier>(context, listen: false)
+                  .othersurveyerpartyid
+                  .toString(),
+              ownpi,
+              context);
+        }
+      } else {
+        if (intimationstatus == "Request Assign to Surveyor") {
+          branchid = pidetailsresponse.response![0].branchid.toString();
+          proinspectionid =
+              pidetailsresponse.response![0].preinspectionid.toString();
+          getpiownupdate(
+              Provider.of<LoginFlowScreenNotifier>(context, listen: false)
+                  .partid
+                  .toString(),
+              ownpi,
+              context);
+        } else {
+          showDialog(
+            context: context,
+            builder: (alertDialogContext) => const AlertDialog(
+              content: SizedBox(
+                  height: 60,
+                  width: 60,
+                  child: Center(
+                      child: Text(
+                    "Please upload Rc Copy",
+                    style: TextStyle(color: redcolor),
+                  ))),
+            ),
+          );
+        }
+      }
+    }
+  
+
+
+  }
+
+  
   savePiDetailapi(
       PIDetailsSaveApiEvent event, Emitter<PIDetailState> emit) async {
     emit(PIDetailLoading());
@@ -308,7 +2262,32 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
         emit(FileAlreadyUploaded(event.tagName));
       } else {
         _uploadFile(event.tagName, type, base64Image!);
-        emit(FileUploadedSuccessfully(event.tagName));
+        emit(FileUploadedSuccessfully(
+            event.tagName, requestPifilesuploadObjlist));
+      }
+    }
+  }
+
+  deleteUpload(DeleteUploadEvent event, Emitter<PIDetailState> emit) {
+    emit(PIDetailLoading());
+    if (requestPifilesuploadObjlist.isNotEmpty) {
+      for (int i = 0; i < requestPifilesuploadObjlist.length; i++) {
+        if (event.tagName == requestPifilesuploadObjlist[i].tagName) {
+          if (event.tagName == "RC Copy") {
+            isRcCopyUploaded = false;
+            // emit(FileAlreadyUploaded(event.tagName));
+          } else if (event.tagName == "Previous Policy") {
+            isPreviousPolicyUploaded = false;
+            // emit(FileAlreadyUploaded(event.tagName));
+          } else if (event.tagName == "Invoice Copy") {
+            isInvoiceCopyUploaded = false;
+            // emit(FileAlreadyUploaded(event.tagName));
+          }
+          requestPifilesuploadObjlist.removeAt(i);
+          emit(DeleteUploadState(
+              tagName: event.tagName,
+              requestPifilesuploadObjlist: requestPifilesuploadObjlist));
+        }
       }
     }
   }
@@ -337,7 +2316,8 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
       emit(FileAlreadyUploaded(event.tagName));
     } else {
       _uploadFile(event.tagName, fileName, file64);
-      emit(FileUploadedSuccessfully(event.tagName));
+      emit(
+          FileUploadedSuccessfully(event.tagName, requestPifilesuploadObjlist));
     }
   }
 
@@ -353,11 +2333,6 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
       xbizid: "",
       xbizurl: "",
     );
-
-    // Add the upload object to the list based on the tagName
-    requestPifilesuploadObjlist.add(requestPifilesuploadObj);
-
-    // Update the uploaded status for respective tags
     if (tagName == "RC Copy") {
       isRcCopyUploaded = true;
     } else if (tagName == "Previous Policy") {
@@ -365,6 +2340,8 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
     } else if (tagName == "Invoice Copy") {
       isInvoiceCopyUploaded = true;
     }
+    // Add the upload object to the list based on the tagName
+    requestPifilesuploadObjlist.add(requestPifilesuploadObj);
   }
 
 // Show the "Already Uploaded" dialog
