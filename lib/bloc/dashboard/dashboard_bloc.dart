@@ -157,6 +157,7 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
 
       // Fetch the current position
       Position position = await Geolocator.getCurrentPosition(
+        
           locationSettings:
               const LocationSettings(accuracy: LocationAccuracy.high));
 

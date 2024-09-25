@@ -30,6 +30,133 @@ class PIDetailsGetApiEvent extends PIDetailEvent {
       {required this.preInspectionId, required this.userPartyId});
 }
 
+class ValidateTextFieldEvent extends PIDetailEvent {
+  final BuildContext context;
+  final bool otherFlow;
+  final bool ownFlow;
+  final bool hitApiFlow;
+  final String branchPartyId;
+  final String surveyorPartyId;
+  final String productType;
+  final String productCategory;
+  final String vehicleType;
+  final int registrationTypeSelectedValue;
+  final String registrationFormat;
+  final String rtoCode;
+  final String rtoName;
+  final String r1;
+  final String r3;
+  final String r4;
+  final String registrationNo;
+  final String engineNo;
+  final String chassisNo;
+  final String make;
+  final String model;
+  final String yearOfManufacturing;
+  final String fueltype;
+  final String inspectionLocation;
+  final String prefix;
+  final String preInspectionStatus;
+  final String currentStatus;
+  final String contactPerson;
+  final String contactMobileNo;
+  final String insuredName;
+  final String piPurpose;
+  final String endorsementType;
+  final String policyNo;
+  final String ncbPercentage;
+  final String contactNoforSms;
+  final String intimationRemarks;
+  final String userPartyId;
+  final String sourceFrom;
+  final String loginId;
+  final String idvofvehicle;
+  final String proposalType;
+  final String sgicPolicyNumber;
+  final String engineprotectorcover;
+  final String contactnoToSendlink;
+  final String gvw;
+  final String seatingcapacity;
+  final List<RequestPifilesuploadObj>? requestPifilesuploadObj;
+  final String attachmentId;
+  final String preInspectionId;
+  final String title;
+  final String odometerReading;
+  final String agencyStatus;
+  final String rcVerified;
+  final String surveyorRemark;
+  final String vehRunningCondition;
+  final String piFeesAmount;
+  final String conveyanceAmount;
+  final String modeofPayment;
+  final String referenceNumber;
+  final String piFeesCollected;
+  final String branch;
+
+  const ValidateTextFieldEvent(
+      {required this.context,
+      required this.otherFlow,
+      required this.ownFlow,
+      required this.hitApiFlow,
+      required this.branchPartyId,
+      required this.surveyorPartyId,
+      required this.productType,
+      required this.productCategory,
+      required this.vehicleType,
+      required this.registrationTypeSelectedValue,
+      required this.registrationFormat,
+      required this.rtoCode,
+      required this.rtoName,
+      required this.r1,
+      required this.r3,
+      required this.r4,
+      required this.registrationNo,
+      required this.engineNo,
+      required this.chassisNo,
+      required this.make,
+      required this.model,
+      required this.yearOfManufacturing,
+      required this.fueltype,
+      required this.inspectionLocation,
+      required this.prefix,
+      required this.preInspectionStatus,
+      required this.currentStatus,
+      required this.contactPerson,
+      required this.contactMobileNo,
+      required this.insuredName,
+      required this.piPurpose,
+      required this.endorsementType,
+      required this.policyNo,
+      required this.ncbPercentage,
+      required this.contactNoforSms,
+      required this.intimationRemarks,
+      required this.userPartyId,
+      required this.sourceFrom,
+      required this.loginId,
+      required this.idvofvehicle,
+      required this.proposalType,
+      required this.sgicPolicyNumber,
+      required this.engineprotectorcover,
+      required this.contactnoToSendlink,
+      required this.gvw,
+      required this.seatingcapacity,
+      required this.requestPifilesuploadObj,
+      required this.attachmentId,
+      required this.preInspectionId,
+      required this.title,
+      required this.odometerReading,
+      required this.agencyStatus,
+      required this.rcVerified,
+      required this.surveyorRemark,
+      required this.vehRunningCondition,
+      required this.piFeesAmount,
+      required this.conveyanceAmount,
+      required this.modeofPayment,
+      required this.referenceNumber,
+      required this.piFeesCollected,
+      required this.branch});
+}
+
 class PIDetailsSaveApiEvent extends PIDetailEvent {
   final String branchPartyId;
   final String surveyorPartyId;
@@ -400,7 +527,8 @@ class PISubmitEvent extends PIDetailEvent {}
 class NavigateToNcxtScreenEvent extends PIDetailEvent {
   final String preInspectionId;
   final BuildContext context;
+  final bool isIgnore;
 
   const NavigateToNcxtScreenEvent(
-      {required this.preInspectionId, required this.context});
+      {required this.preInspectionId, required this.context, required this.isIgnore});
 }

@@ -247,6 +247,21 @@ class _PIDetailScreenState extends State<PIDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool edittabbarfunction(context) {
+      if (currentstatustextcontoller.text == "" ||
+          currentstatustextcontoller.text == "Report Pending") {
+        return true;
+      } else if (currentstatustextcontoller.text == "no") {
+        return false;
+      } else if (currentstatustextcontoller.text == "Survey On Hold") {
+        return false;
+      } else if (currentstatustextcontoller.text == "Report Pending") {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
     return BlocProvider(
@@ -392,6 +407,58 @@ class _PIDetailScreenState extends State<PIDetailScreen> {
               state.pidetailsresponse.response![0].intimationremarks.toString();
           contactnoforsmstextcontoller.text =
               state.pidetailsresponse.response![0].contacttoSendlink.toString();
+        } else if (state is ValidateSuccessState) {
+          // context.read<PIDetailBloc>().savefun(state.event);
+
+          context.read<PIDetailBloc>().add(PIDetailsSaveApiEvent(
+              branchPartyId: state.event.branchPartyId,
+              surveyorPartyId: state.event.surveyorPartyId,
+              productType: state.event.productType,
+              productCategory: state.event.productCategory,
+              vehicleType: state.event.vehicleType,
+              registrationFormat: state.event.registrationFormat,
+              registrationNo: state.event.registrationNo,
+              engineNo: state.event.engineNo,
+              chassisNo: state.event.chassisNo,
+              make: state.event.make,
+              model: state.event.model,
+              yearOfManufacturing: state.event.yearOfManufacturing,
+              fueltype: state.event.fueltype,
+              inspectionLocation: state.event.inspectionLocation,
+              contactPerson: state.event.contactPerson,
+              contactMobileNo: state.event.contactMobileNo,
+              insuredName: state.event.insuredName,
+              piPurpose: state.event.piPurpose,
+              endorsementType: state.event.endorsementType,
+              policyNo: state.event.policyNo,
+              ncbPercentage: state.event.ncbPercentage,
+              contactNoforSms: state.event.contactNoforSms,
+              intimationRemarks: state.event.intimationRemarks,
+              userPartyId: state.event.userPartyId,
+              sourceFrom: state.event.sourceFrom,
+              loginId: state.event.loginId,
+              idvofvehicle: state.event.idvofvehicle,
+              proposalType: state.event.proposalType,
+              sgicPolicyNumber: state.event.sgicPolicyNumber,
+              engineprotectorcover: state.event.engineprotectorcover,
+              contactnoToSendlink: state.event.contactnoToSendlink,
+              gvw: state.event.gvw,
+              seatingcapacity: state.event.seatingcapacity,
+              requestPifilesuploadObj: state.event.requestPifilesuploadObj,
+              attachmentId: state.event.attachmentId,
+              preInspectionId: state.event.preInspectionId,
+              title: state.event.title,
+              odometerReading: state.event.odometerReading,
+              agencyStatus: state.event.agencyStatus,
+              rcVerified: state.event.rcVerified,
+              surveyorRemark: state.event.surveyorRemark,
+              vehRunningCondition: state.event.vehRunningCondition,
+              piFeesAmount: state.event.piFeesAmount,
+              conveyanceAmount: state.event.conveyanceAmount,
+              modeofPayment: state.event.modeofPayment,
+              referenceNumber: state.event.referenceNumber,
+              piFeesCollected: state.event.piFeesCollected,
+              branch: state.event.branch));
         } else if (state is FileUploadedSuccessfully) {
           if (state.tagName == "RC Copy") {
             isrccopyuploaded = true;
@@ -2671,194 +2738,231 @@ class _PIDetailScreenState extends State<PIDetailScreen> {
                                                                       provider.issubmitted)
                                                               ? const SizedBox()
                                                               : */
-                                        Padding(
-                                          padding: const EdgeInsets.all(10.0),
-                                          child: Visibility(
-                                            visible: !context
-                                                        .read<PIDetailBloc>()
-                                                        .isPiSubmitted ||
+                                        !(currentstatustextcontoller.text ==
+                                                        "Survey On Hold" ||
                                                     currentstatustextcontoller
                                                             .text ==
-                                                        "Report Pending"
-                                                ? false
-                                                : true,
-                                            child: SizedBox(
-                                              height: 50,
-                                              width: MediaQuery.of(context)
-                                                  .size
-                                                  .width,
-                                              child: ElevatedButton(
-                                                  onPressed: () {
+                                                        "Request Assign to Surveyor") &&
+                                                (widget.hitapiflow ||
                                                     context
                                                         .read<PIDetailBloc>()
-                                                        .add(
-                                                            PIDetailsSaveApiEvent(
-                                                          /// add this
-                                                          branchPartyId:
-                                                              branchCode,
-
-                                                          /// addd this
-                                                          surveyorPartyId:
-                                                              userId,
-                                                          productType:
-                                                              producttextcontoller
-                                                                  .text,
-                                                          productCategory:
-                                                              vehiclecategorytextcontoller
-                                                                  .text,
-                                                          vehicleType:
-                                                              vehicleTypetextcontoller
-                                                                  .text,
-                                                          registrationFormat:
-                                                              widget.ownflow
-                                                                  ? ""
-                                                                  : registrationnumberformattextcontoller
+                                                        .isPiSubmitted)
+                                            ? const SizedBox()
+                                            : Padding(
+                                                padding:
+                                                    const EdgeInsets.all(10.0),
+                                                child: SizedBox(
+                                                  height: 50,
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                                  child: ElevatedButton(
+                                                      onPressed: () {
+                                                        context
+                                                            .read<
+                                                                PIDetailBloc>()
+                                                            .add(
+                                                                ValidateTextFieldEvent(
+                                                              context: context,
+                                                              currentStatus:
+                                                                  currentstatustextcontoller
                                                                       .text,
-                                                          registrationNo:
-                                                              "${r1textcontoller.text.trim()}-${r2textcontoller.text.trim()}-${r3textcontoller.text.trim()}-${r4textcontoller.text.trim()}",
-                                                          engineNo:
-                                                              enginenumbertextcontoller
+                                                              hitApiFlow: widget
+                                                                  .hitapiflow,
+                                                              otherFlow: widget
+                                                                  .otherflow,
+                                                              ownFlow: widget
+                                                                  .ownflow,
+                                                              preInspectionStatus:
+                                                                  preinspectionstatustextcontoller
+                                                                      .text,
+                                                              prefix:
+                                                                  prefixtextcontoller
+                                                                      .text,
+                                                              r1: r1textcontoller
                                                                   .text,
-                                                          chassisNo:
-                                                              chassisnumbertextcontoller
+                                                              r3: r3textcontoller
                                                                   .text,
-                                                          make:
-                                                              maketextcontoller
+                                                              r4: r4textcontoller
                                                                   .text,
-                                                          model:
-                                                              modeltextcontoller
-                                                                  .text,
-                                                          yearOfManufacturing:
-                                                              yearofmanuftextcontoller
-                                                                  .text,
-                                                          fueltype:
-                                                              fueltypetextcontoller
-                                                                  .text,
-                                                          inspectionLocation:
-                                                              inspectionlocationtextcontoller
-                                                                  .text,
-                                                          contactPerson:
-                                                              contactpersontextcontoller
-                                                                  .text,
-                                                          contactMobileNo:
-                                                              contactmobienumbertextcontoller
-                                                                  .text,
-                                                          insuredName:
-                                                              insurednametextcontoller
-                                                                  .text,
-                                                          piPurpose:
-                                                              pipurposetextcontoller
-                                                                  .text,
-                                                          endorsementType:
-                                                              endoresementtypetextcontoller
-                                                                  .text,
-                                                          policyNo:
-                                                              policynumbertextcontoller
-                                                                  .text,
-                                                          ncbPercentage:
-                                                              ncbtextcontoller
-                                                                  .text,
-                                                          contactNoforSms:
-                                                              contactnoforsmstextcontoller
-                                                                  .text,
-                                                          intimationRemarks: widget
-                                                                  .ownflow
-                                                              ? "SELF PI"
-                                                              : intimationstatustextcontoller
-                                                                  .text,
+                                                              registrationTypeSelectedValue:
+                                                                  registrationtypeselectedvalue,
+                                                              rtoCode:
+                                                                  rtocodetextcontoller
+                                                                      .text,
+                                                              rtoName:
+                                                                  rtonametextcontoller
+                                                                      .text,
 
-                                                          /// add this
-                                                          userPartyId: userId,
-                                                          sourceFrom:
-                                                              "I-Nova", // TODO ASK
-                                                          /// add this
-                                                          loginId: userMailId,
-                                                          idvofvehicle:
-                                                              idvtextcontoller
-                                                                  .text,
-                                                          proposalType:
-                                                              proposaltypetextcontoller
-                                                                  .text,
-                                                          sgicPolicyNumber:
-                                                              sgicpolicynumbertextcontoller
-                                                                  .text,
-                                                          engineprotectorcover:
-                                                              epcrtextcontoller
-                                                                  .text,
-                                                          contactnoToSendlink:
-                                                              selfpitextcontoller
-                                                                  .text,
-                                                          gvw: gvwtextcontoller
-                                                              .text,
-                                                          seatingcapacity:
-                                                              seatingCapcitytextcontoller
-                                                                  .text,
+                                                              /// add this
+                                                              branchPartyId:
+                                                                  branchCode,
 
-                                                          /// add this
-                                                          requestPifilesuploadObj:
-                                                              requestPifilesuploadObjlist,
-                                                          attachmentId:
-                                                              "", // TODO ASK
-                                                          preInspectionId:
-                                                              "", // TODO ASK
-                                                          title:
-                                                              prefixtextcontoller
-                                                                  .text,
-                                                          odometerReading:
-                                                              odometertextcontoller
-                                                                  .text,
-                                                          agencyStatus:
-                                                              preinspectionstatustextcontoller
-                                                                  .text, // TODO ASK ///add this
-                                                          rcVerified: widget
-                                                                  .ownflow
-                                                              ? rcverifiedtextcontoller
-                                                                          .text ==
-                                                                      "Yes"
-                                                                  ? "1"
-                                                                  : "0"
-                                                              : "",
-                                                          surveyorRemark:
-                                                              surveyorremarkstextcontoller
-                                                                  .text,
-                                                          vehRunningCondition: widget
-                                                                  .ownflow
-                                                              ? vehiclerunningconditiontextcontoller
-                                                                          .text ==
-                                                                      "Yes"
-                                                                  ? "Y"
-                                                                  : "N"
-                                                              : "",
-                                                          piFeesAmount:
-                                                              pifeeamounttextcontoller
-                                                                  .text,
-                                                          conveyanceAmount:
-                                                              conveyanceamounttextcontoller
-                                                                  .text,
-                                                          modeofPayment:
-                                                              modeofpaymenttextcontoller
-                                                                  .text,
-                                                          referenceNumber:
-                                                              "", // TODO ASK
-                                                          piFeesCollected:
-                                                              pifeecollectedtextcontoller
-                                                                  .text,
-                                                          branch:
-                                                              branchnametextcontoller
-                                                                  .text,
-                                                        ));
-                                                    // provider.ifelsecondigtionforsubmit(
-                                                    //     widget.ownpi,
-                                                    //     widget
-                                                    //         .otherpi,
-                                                    //     widget
-                                                    //         .ishitapi,
-                                                    //     context);
-                                                  },
-                                                  child: const Text("Submit")),
-                                            ),
-                                          ),
-                                        ),
+                                                              /// addd this
+                                                              surveyorPartyId:
+                                                                  userId,
+                                                              productType:
+                                                                  producttextcontoller
+                                                                      .text,
+                                                              productCategory:
+                                                                  vehiclecategorytextcontoller
+                                                                      .text,
+                                                              vehicleType:
+                                                                  vehicleTypetextcontoller
+                                                                      .text,
+                                                              registrationFormat:
+                                                                  widget.ownflow
+                                                                      ? ""
+                                                                      : registrationnumberformattextcontoller
+                                                                          .text,
+                                                              registrationNo:
+                                                                  "${r1textcontoller.text.trim()}-${r2textcontoller.text.trim()}-${r3textcontoller.text.trim()}-${r4textcontoller.text.trim()}",
+                                                              engineNo:
+                                                                  enginenumbertextcontoller
+                                                                      .text,
+                                                              chassisNo:
+                                                                  chassisnumbertextcontoller
+                                                                      .text,
+                                                              make:
+                                                                  maketextcontoller
+                                                                      .text,
+                                                              model:
+                                                                  modeltextcontoller
+                                                                      .text,
+                                                              yearOfManufacturing:
+                                                                  yearofmanuftextcontoller
+                                                                      .text,
+                                                              fueltype:
+                                                                  fueltypetextcontoller
+                                                                      .text,
+                                                              inspectionLocation:
+                                                                  inspectionlocationtextcontoller
+                                                                      .text,
+                                                              contactPerson:
+                                                                  contactpersontextcontoller
+                                                                      .text,
+                                                              contactMobileNo:
+                                                                  contactmobienumbertextcontoller
+                                                                      .text,
+                                                              insuredName:
+                                                                  insurednametextcontoller
+                                                                      .text,
+                                                              piPurpose:
+                                                                  pipurposetextcontoller
+                                                                      .text,
+                                                              endorsementType:
+                                                                  endoresementtypetextcontoller
+                                                                      .text,
+                                                              policyNo:
+                                                                  policynumbertextcontoller
+                                                                      .text,
+                                                              ncbPercentage:
+                                                                  ncbtextcontoller
+                                                                      .text,
+                                                              contactNoforSms:
+                                                                  contactnoforsmstextcontoller
+                                                                      .text,
+                                                              intimationRemarks:
+                                                                  widget.ownflow
+                                                                      ? "SELF PI"
+                                                                      : intimationstatustextcontoller
+                                                                          .text,
+
+                                                              /// add this
+                                                              userPartyId:
+                                                                  userId,
+                                                              sourceFrom:
+                                                                  "I-Nova", // TODO ASK
+                                                              /// add this
+                                                              loginId:
+                                                                  userMailId,
+                                                              idvofvehicle:
+                                                                  idvtextcontoller
+                                                                      .text,
+                                                              proposalType:
+                                                                  proposaltypetextcontoller
+                                                                      .text,
+                                                              sgicPolicyNumber:
+                                                                  sgicpolicynumbertextcontoller
+                                                                      .text,
+                                                              engineprotectorcover:
+                                                                  epcrtextcontoller
+                                                                      .text,
+                                                              contactnoToSendlink:
+                                                                  selfpitextcontoller
+                                                                      .text,
+                                                              gvw:
+                                                                  gvwtextcontoller
+                                                                      .text,
+                                                              seatingcapacity:
+                                                                  seatingCapcitytextcontoller
+                                                                      .text,
+
+                                                              /// add this
+                                                              requestPifilesuploadObj:
+                                                                  requestPifilesuploadObjlist,
+                                                              attachmentId:
+                                                                  "", // TODO ASK
+                                                              preInspectionId:
+                                                                  "", // TODO ASK
+                                                              title:
+                                                                  prefixtextcontoller
+                                                                      .text,
+                                                              odometerReading:
+                                                                  odometertextcontoller
+                                                                      .text,
+                                                              agencyStatus:
+                                                                  preinspectionstatustextcontoller
+                                                                      .text, // TODO ASK ///add this
+                                                              rcVerified: widget
+                                                                      .ownflow
+                                                                  ? rcverifiedtextcontoller
+                                                                              .text ==
+                                                                          "Yes"
+                                                                      ? "1"
+                                                                      : "0"
+                                                                  : "",
+                                                              surveyorRemark:
+                                                                  surveyorremarkstextcontoller
+                                                                      .text,
+                                                              vehRunningCondition: widget
+                                                                      .ownflow
+                                                                  ? vehiclerunningconditiontextcontoller
+                                                                              .text ==
+                                                                          "Yes"
+                                                                      ? "Y"
+                                                                      : "N"
+                                                                  : "",
+                                                              piFeesAmount:
+                                                                  pifeeamounttextcontoller
+                                                                      .text,
+                                                              conveyanceAmount:
+                                                                  conveyanceamounttextcontoller
+                                                                      .text,
+                                                              modeofPayment:
+                                                                  modeofpaymenttextcontoller
+                                                                      .text,
+                                                              referenceNumber:
+                                                                  "", // TODO ASK
+                                                              piFeesCollected:
+                                                                  pifeecollectedtextcontoller
+                                                                      .text,
+                                                              branch:
+                                                                  branchnametextcontoller
+                                                                      .text,
+                                                            ));
+                                                        // provider.ifelsecondigtionforsubmit(
+                                                        //     widget.ownpi,
+                                                        //     widget
+                                                        //         .otherpi,
+                                                        //     widget
+                                                        //         .ishitapi,
+                                                        //     context);
+                                                      },
+                                                      child:
+                                                          const Text("Submit")),
+                                                ),
+                                              ),
                                         const SizedBox(
                                           height: 50,
                                         ),
@@ -2883,7 +2987,9 @@ class _PIDetailScreenState extends State<PIDetailScreen> {
                       context.read<PIDetailBloc>().add(
                           NavigateToNcxtScreenEvent(
                               preInspectionId: preInspectionId,
-                              context: context));
+                              context: context,
+                              isIgnore: edittabbarfunction(context) ||
+                                  widget.ownflow));
                     },
                     child: const Icon(Icons.image),
                   )

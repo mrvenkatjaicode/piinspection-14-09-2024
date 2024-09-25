@@ -676,8 +676,7 @@ class Response {
         "SURVEYORMAILID": surveyormailid,
         "SURVEYORREMARK": surveyorremark,
         "SURVEYORTYPE": surveyortype,
-        "SURVEYOR_AGENCY_NAME":
-            surveyorAgencyNameValues.reverse[surveyorAgencyName],
+        "SURVEYOR_AGENCY_NAME": surveyorAgencyName,
         "SURVEY_SUBMIT_DATE": surveySubmitDate,
         "SpecialApprovalAlert": specialApprovalAlert,
         "State": state,
@@ -711,7 +710,7 @@ class Imageresponse {
   String? fileUniqueName;
   String? tagId;
   String? tagName;
-  SurveyorAgencyName? uploadedby;
+  String? uploadedby;
   String? uploadeddate;
   String? uploadfilemasterid;
   Uploadfrom? uploadfrom;
@@ -746,7 +745,7 @@ class Imageresponse {
         fileUniqueName: json["FileUniqueName"],
         tagId: json["TagId"],
         tagName: json["TagName"],
-        uploadedby: surveyorAgencyNameValues.map[json["UPLOADEDBY"]]!,
+        uploadedby: json["UPLOADEDBY"],
         uploadeddate: json["UPLOADEDDATE"],
         uploadfilemasterid: json["UPLOADFILEMASTERID"],
         uploadfrom: uploadfromValues.map[json["UPLOADFROM"]]!,
@@ -764,7 +763,7 @@ class Imageresponse {
         "FileUniqueName": fileUniqueName,
         "TagId": tagId,
         "TagName": tagName,
-        "UPLOADEDBY": surveyorAgencyNameValues.reverse[uploadedby],
+        "UPLOADEDBY": uploadedby,
         "UPLOADEDDATE": uploadeddate,
         "UPLOADFILEMASTERID": uploadfilemasterid,
         "UPLOADFROM": uploadfromValues.reverse[uploadfrom],
@@ -777,13 +776,6 @@ enum Extension { JPG, MP4, PNG }
 
 final extensionValues = EnumValues(
     {".jpg": Extension.JPG, ".mp4": Extension.MP4, ".png": Extension.PNG});
-
-enum SurveyorAgencyName { EMPTY, SHRIGEN_UAT }
-
-final surveyorAgencyNameValues = EnumValues({
-  "": SurveyorAgencyName.EMPTY,
-  "SHRIGEN UAT": SurveyorAgencyName.SHRIGEN_UAT
-});
 
 enum Uploadfrom { PI }
 
@@ -815,7 +807,7 @@ class SurveyorList {
   Map<String, dynamic> toJson() => {
         "SurveyorDoneBy": surveyorDoneBy,
         "SurveyorId": surveyorId,
-        "SurveyorName": surveyorAgencyNameValues.reverse[surveyorName],
+        "SurveyorName": surveyorName,
         "SurveyorPartyId": surveyorPartyId,
         "SurveyorType": surveyorType,
       };

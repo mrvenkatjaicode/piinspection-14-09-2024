@@ -9,7 +9,7 @@ import 'package:path/path.dart' as path;
 
 class VideoBloc extends Bloc<VideoEvent, VideoState> {
   CameraController? _cameraController;
-  late Timer _timer;
+  Timer? _timer;
 
   VideoBloc() : super(VideoInitialState()) {
     on<InitializeCameraEvent>(_onInitializingCamera);
@@ -52,7 +52,7 @@ class VideoBloc extends Bloc<VideoEvent, VideoState> {
     if (_cameraController != null &&
         _cameraController!.value.isRecordingVideo) {
       final videoFile = await _cameraController!.stopVideoRecording();
-      _timer.cancel();
+      _timer!.cancel();
       Navigator.pop(event.context, videoFile);
       emit(VideoRecordedState(videoFile, event.isshowStartRecording));
     }
@@ -67,7 +67,9 @@ class VideoBloc extends Bloc<VideoEvent, VideoState> {
   @override
   Future<void> close() {
     _cameraController?.dispose();
-    _timer.cancel();
+    if (_timer != null) {
+      _timer!.cancel();
+    }
     return super.close();
   }
 }

@@ -134,14 +134,15 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
     on<PISubmitEvent>(getPiSubmit);
     on<NavigateToNcxtScreenEvent>(navigatetonxtscreen);
     on<DeleteUploadEvent>(deleteUpload);
+    on<ValidateTextFieldEvent>(validateTextfield);
   }
 
-  validateTextfield(PIDetailsSaveApiEvent event, Emitter<PIDetailState> emit){
+  validateTextfield(ValidateTextFieldEvent event, Emitter<PIDetailState> emit) {
 // ownpi, otherpi, ishitapi, context
-  
+
     if (event.branch.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -160,15 +161,15 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                Scrollable.ensureVisible(branchnameKey.currentContext!);
-                Provider.of<DropDownListNotifier>(context, listen: false)
-                    .getBranchName(
-                        Provider.of<LoginFlowScreenNotifier>(context,
-                                listen: false)
-                            .partid
-                            .toString(),
-                        branchnamecontroller,
-                        context);
+                // Scrollable.ensureVisible(branchnameKey.currentContext!);
+                // Provider.of<DropDownListNotifier>(context, listen: false)
+                //     .getBranchName(
+                //         Provider.of<LoginFlowScreenNotifier>(context,
+                //                 listen: false)
+                //             .partid
+                //             .toString(),
+                //         branchnamecontroller,
+                //         context);
               },
               child: const Text('Ok'),
             ),
@@ -177,7 +178,7 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
       );
     } else if (event.surveyorPartyId.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -199,7 +200,7 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                FocusScope.of(context).requestFocus(focussurveyorname);
+                // FocusScope.of(context).requestFocus(focussurveyorname);
               },
               child: const Text('Ok'),
             ),
@@ -208,7 +209,7 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
       );
     } else if (event.productType.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -230,27 +231,26 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                Provider.of<DropDownListNotifier>(context, listen: false)
-                    .getloadcombo(
-                        Provider.of<LoginFlowScreenNotifier>(context,
-                                listen: false)
-                            .partid
-                            .toString(),
-                        false,
-                        "Product",
-                        productcontroller,
-                        context);
-                Scrollable.ensureVisible(productkey.currentContext!);
+                // Provider.of<DropDownListNotifier>(context, listen: false)
+                //     .getloadcombo(
+                //         Provider.of<LoginFlowScreenNotifier>(context,
+                //                 listen: false)
+                //             .partid
+                //             .toString(),
+                //         false,
+                //         "Product",
+                //         productcontroller,
+                //         context);
+                // Scrollable.ensureVisible(productkey.currentContext!);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (isShowVehicleCategory &&
-        event.productCategory.isEmpty) {
+    } else if (isShowVehicleCategory && event.productCategory.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -272,26 +272,25 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                Provider.of<DropDownListNotifier>(context, listen: false)
-                    .getvehcategory(
-                        Provider.of<LoginFlowScreenNotifier>(context,
-                                listen: false)
-                            .partid
-                            .toString(),
-                        productCode,
-                        vehiclecategorycontroller,
-                        context);
-                Scrollable.ensureVisible(vehiclecategorykey.currentContext!);
+                // Provider.of<DropDownListNotifier>(context, listen: false)
+                //     .getvehcategory(
+                //         Provider.of<LoginFlowScreenNotifier>(context,
+                //                 listen: false)
+                //             .partid
+                //             .toString(),
+                //         productCode,
+                //         vehiclecategorycontroller,
+                //         context);
+                // Scrollable.ensureVisible(vehiclecategorykey.currentContext!);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (isShowSeatingCapacity &&
-        event.seatingcapacity.isEmpty) {
+    } else if (isShowSeatingCapacity && event.seatingcapacity.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -313,9 +312,9 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                Provider.of<DropDownListNotifier>(context, listen: false)
-                    .getSeatingCapacity(seatingcapacitycontroller, context);
-                Scrollable.ensureVisible(seatingcapacitykey.currentContext!);
+                // Provider.of<DropDownListNotifier>(context, listen: false)
+                //     .getSeatingCapacity(seatingcapacitycontroller, context);
+                // Scrollable.ensureVisible(seatingcapacitykey.currentContext!);
               },
               child: const Text('Ok'),
             ),
@@ -324,7 +323,7 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
       );
     } else if (isShowgvw && event.gvw.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -346,9 +345,9 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                Provider.of<DropDownListNotifier>(context, listen: false)
-                    .getGvw(gvwcontroller, context);
-                Scrollable.ensureVisible(gvwkey.currentContext!);
+                // Provider.of<DropDownListNotifier>(context, listen: false)
+                //     .getGvw(gvwcontroller, context);
+                // Scrollable.ensureVisible(gvwkey.currentContext!);
               },
               child: const Text('Ok'),
             ),
@@ -357,7 +356,7 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
       );
     } else if (event.piPurpose.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -379,67 +378,66 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                Scrollable.ensureVisible(pipurposekey.currentContext!);
-                if (productcontroller.text == "PCCV") {
-                  if (vehiclecategorycontroller.text == "") {
-                    showDialog(
-                      context: context,
-                      builder: (alertDialogContext) => const AlertDialog(
-                        content: SizedBox(
-                            height: 60,
-                            width: 60,
-                            child: Center(
-                                child: Text(
-                                    "Please Select Vehicle Category First"))),
-                      ),
-                    );
-                  } else {
-                    Provider.of<DropDownListNotifier>(context, listen: false)
-                        .getloadcombo(
-                            Provider.of<LoginFlowScreenNotifier>(context,
-                                    listen: false)
-                                .partid
-                                .toString(),
-                            false,
-                            "PI Purpose",
-                            pipuposecontroller,
-                            context);
-                  }
-                } else {
-                  productcontroller.text == ""
-                      ? showDialog(
-                          context: context,
-                          builder: (alertDialogContext) => const AlertDialog(
-                            content: SizedBox(
-                                height: 60,
-                                width: 60,
-                                child: Center(
-                                    child: Text(
-                                        "Please Select Product List First"))),
-                          ),
-                        )
-                      : Provider.of<DropDownListNotifier>(context,
-                              listen: false)
-                          .getloadcombo(
-                              Provider.of<LoginFlowScreenNotifier>(context,
-                                      listen: false)
-                                  .partid
-                                  .toString(),
-                              false,
-                              "PI Purpose",
-                              pipuposecontroller,
-                              context);
-                }
+                // Scrollable.ensureVisible(pipurposekey.currentContext!);
+                // if (productcontroller.text == "PCCV") {
+                //   if (vehiclecategorycontroller.text == "") {
+                //     showDialog(
+                //       context: context,
+                //       builder: (alertDialogContext) => const AlertDialog(
+                //         content: SizedBox(
+                //             height: 60,
+                //             width: 60,
+                //             child: Center(
+                //                 child: Text(
+                //                     "Please Select Vehicle Category First"))),
+                //       ),
+                //     );
+                //   } else {
+                //     Provider.of<DropDownListNotifier>(context, listen: false)
+                //         .getloadcombo(
+                //             Provider.of<LoginFlowScreenNotifier>(context,
+                //                     listen: false)
+                //                 .partid
+                //                 .toString(),
+                //             false,
+                //             "PI Purpose",
+                //             pipuposecontroller,
+                //             context);
+                //   }
+                // } else {
+                //   productcontroller.text == ""
+                //       ? showDialog(
+                //           context: context,
+                //           builder: (alertDialogContext) => const AlertDialog(
+                //             content: SizedBox(
+                //                 height: 60,
+                //                 width: 60,
+                //                 child: Center(
+                //                     child: Text(
+                //                         "Please Select Product List First"))),
+                //           ),
+                //         )
+                //       : Provider.of<DropDownListNotifier>(context,
+                //               listen: false)
+                //           .getloadcombo(
+                //               Provider.of<LoginFlowScreenNotifier>(context,
+                //                       listen: false)
+                //                   .partid
+                //                   .toString(),
+                //               false,
+                //               "PI Purpose",
+                //               pipuposecontroller,
+                //               context);
+                // }
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (isShowEndorsementType &&
-        event.endorsementType.isEmpty) {
+    } else if (isShowEndorsementType && event.endorsementType.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -461,17 +459,17 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                Provider.of<DropDownListNotifier>(context, listen: false)
-                    .getloadcombo(
-                        Provider.of<LoginFlowScreenNotifier>(context,
-                                listen: false)
-                            .partid
-                            .toString(),
-                        false,
-                        "Endorsement Type",
-                        endorsementtypecontroller,
-                        context);
-                Scrollable.ensureVisible(endoresementtypekey.currentContext!);
+                // Provider.of<DropDownListNotifier>(context, listen: false)
+                //     .getloadcombo(
+                //         Provider.of<LoginFlowScreenNotifier>(context,
+                //                 listen: false)
+                //             .partid
+                //             .toString(),
+                //         false,
+                //         "Endorsement Type",
+                //         endorsementtypecontroller,
+                //         context);
+                // Scrollable.ensureVisible(endoresementtypekey.currentContext!);
               },
               child: const Text('Ok'),
             ),
@@ -480,7 +478,7 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
       );
     } else if (isShowEndorsementType && event.policyNo.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -502,20 +500,20 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                FocusScope.of(context).requestFocus(focuspolicynumber);
+                // FocusScope.of(context).requestFocus(focuspolicynumber);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (event.productType  == "PRIVATE CAR" &&
+    } else if (event.productType == "PRIVATE CAR" &&
         (event.piPurpose == "Nil Dep." ||
-           event.piPurpose  == "Break-In with Nil Dep.") &&
+            event.piPurpose == "Break-In with Nil Dep.") &&
         event.engineprotectorcover.isEmpty) {
       // TODO ONLY FOR PRVIATE CAR
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -537,9 +535,9 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                showprotectorcoverselectvalue();
-                Scrollable.ensureVisible(
-                    engineprotectorcoverkey.currentContext!);
+                // showprotectorcoverselectvalue();
+                // Scrollable.ensureVisible(
+                //     engineprotectorcoverkey.currentContext!);
               },
               child: const Text('Ok'),
             ),
@@ -548,7 +546,7 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
       );
     } else if (event.make.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -570,16 +568,16 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                Provider.of<DropDownListNotifier>(context, listen: false)
-                    .getmake(
-                        Provider.of<LoginFlowScreenNotifier>(context,
-                                listen: false)
-                            .partid
-                            .toString(),
-                        productCode,
-                        makecontroller,
-                        context);
-                Scrollable.ensureVisible(makekey.currentContext!);
+                // Provider.of<DropDownListNotifier>(context, listen: false)
+                //     .getmake(
+                //         Provider.of<LoginFlowScreenNotifier>(context,
+                //                 listen: false)
+                //             .partid
+                //             .toString(),
+                //         productCode,
+                //         makecontroller,
+                //         context);
+                // Scrollable.ensureVisible(makekey.currentContext!);
               },
               child: const Text('Ok'),
             ),
@@ -588,7 +586,7 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
       );
     } else if (event.model.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -610,17 +608,17 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                Provider.of<DropDownListNotifier>(context, listen: false)
-                    .getmodel(
-                        Provider.of<LoginFlowScreenNotifier>(context,
-                                listen: false)
-                            .partid
-                            .toString(),
-                        productCode,
-                        makeCode,
-                        modelcontroller,
-                        context);
-                Scrollable.ensureVisible(modelkey.currentContext!);
+                // Provider.of<DropDownListNotifier>(context, listen: false)
+                //     .getmodel(
+                //         Provider.of<LoginFlowScreenNotifier>(context,
+                //                 listen: false)
+                //             .partid
+                //             .toString(),
+                //         productCode,
+                //         makeCode,
+                //         modelcontroller,
+                //         context);
+                // Scrollable.ensureVisible(modelkey.currentContext!);
               },
               child: const Text('Ok'),
             ),
@@ -629,7 +627,7 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
       );
     } else if (event.fueltype.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -651,17 +649,17 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                Provider.of<DropDownListNotifier>(context, listen: false)
-                    .getloadcombo(
-                        Provider.of<LoginFlowScreenNotifier>(context,
-                                listen: false)
-                            .partid
-                            .toString(),
-                        false,
-                        "Fuel Type",
-                        fueltypecontroller,
-                        context);
-                Scrollable.ensureVisible(fueltypekey.currentContext!);
+                // Provider.of<DropDownListNotifier>(context, listen: false)
+                //     .getloadcombo(
+                //         Provider.of<LoginFlowScreenNotifier>(context,
+                //                 listen: false)
+                //             .partid
+                //             .toString(),
+                //         false,
+                //         "Fuel Type",
+                //         fueltypecontroller,
+                //         context);
+                // Scrollable.ensureVisible(fueltypekey.currentContext!);
               },
               child: const Text('Ok'),
             ),
@@ -669,10 +667,10 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
         ),
       );
     } else if (event.vehicleType == "Old" &&
-        selectedregistrationtypeRadio == 1 &&
-     event.r   rtocodecontroller.text.isEmpty) {
+        event.registrationTypeSelectedValue == 1 &&
+        event.rtoCode.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -694,18 +692,18 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                FocusScope.of(context).requestFocus(focusrtocode);
+                // FocusScope.of(context).requestFocus(focusrtocode);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (event.vehicleType  == "Old" &&
-        selectedregistrationtypeRadio == 1 &&
-        rtonamecontroller.text.isEmpty) {
+    } else if (event.vehicleType == "Old" &&
+        event.registrationTypeSelectedValue == 1 &&
+        event.rtoName.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -727,17 +725,16 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                FocusScope.of(context).requestFocus(focusrtocode);
+                // FocusScope.of(context).requestFocus(focusrtocode);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (selectedregistrationtypeRadio == 2 &&
-        regisnumberonecontroller.text.isEmpty) {
+    } else if (event.registrationTypeSelectedValue == 2 && event.r1.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -759,18 +756,18 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                FocusScope.of(context).requestFocus(focusregisnumberone);
+                // FocusScope.of(context).requestFocus(focusregisnumberone);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (vehicletypecontroller.text == "Old" &&
-        selectedregistrationtypeRadio == 1 &&
-        regisnumberthreecontroller.text.isEmpty) {
+    } else if (event.vehicleType == "Old" &&
+        event.registrationTypeSelectedValue == 1 &&
+        event.r3.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -792,17 +789,16 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                FocusScope.of(context).requestFocus(focusregisnumberthree);
+                // FocusScope.of(context).requestFocus(focusregisnumberthree);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (selectedregistrationtypeRadio == 2 &&
-        regisnumberthreecontroller.text.isEmpty) {
+    } else if (event.registrationTypeSelectedValue == 2 && event.r3.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -824,18 +820,18 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                FocusScope.of(context).requestFocus(focusregisnumberthree);
+                // FocusScope.of(context).requestFocus(focusregisnumberthree);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (selectedregistrationtypeRadio == 2 &&
-        regisnumberthreecontroller.text.isNotEmpty &&
-        regisnumberthreecontroller.text.length < 4) {
+    } else if (event.registrationTypeSelectedValue == 2 &&
+        event.r3.isNotEmpty &&
+        event.r3.length < 4) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -857,18 +853,18 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                FocusScope.of(context).requestFocus(focusregisnumberthree);
+                // FocusScope.of(context).requestFocus(focusregisnumberthree);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (vehicletypecontroller.text == "New" &&
-        selectedregistrationtypeRadio == 2 &&
-        regisnumberthreecontroller.text.isEmpty) {
+    } else if (event.vehicleType == "New" &&
+        event.registrationTypeSelectedValue == 2 &&
+        event.r3.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -890,7 +886,7 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                FocusScope.of(context).requestFocus(focusregisnumberthree);
+                // FocusScope.of(context).requestFocus(focusregisnumberthree);
               },
               child: const Text('Ok'),
             ),
@@ -928,12 +924,12 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
         ),
       );
     } */
-    else if (vehicletypecontroller.text == "Old" &&
-        selectedregistrationtypeRadio == 1 &&
-        regisnumberfourcontroller.text.isNotEmpty &&
-        regisnumberfourcontroller.text.length < 4) {
+    else if (event.vehicleType == "Old" &&
+        event.registrationTypeSelectedValue == 1 &&
+        event.r4.isNotEmpty &&
+        event.r4.length < 4) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -955,19 +951,19 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                FocusScope.of(context)
-                    .requestFocus(focusregistrationfournumber);
+                // FocusScope.of(context)
+                //     .requestFocus(focusregistrationfournumber);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (vehicletypecontroller.text == "Old" &&
-        selectedregistrationtypeRadio == 1 &&
-        regisnumberfourcontroller.text.isEmpty) {
+    } else if (event.vehicleType == "Old" &&
+        event.registrationTypeSelectedValue == 1 &&
+        event.r4.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -989,20 +985,19 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                FocusScope.of(context)
-                    .requestFocus(focusregistrationfournumber);
+                // FocusScope.of(context)
+                //     .requestFocus(focusregistrationfournumber);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if ((vehicletypecontroller.text == "Old" ||
-            vehicletypecontroller.text == "New") &&
-        selectedregistrationtypeRadio == 2 &&
-        regisnumberfourcontroller.text.isEmpty) {
+    } else if ((event.vehicleType == "Old" || event.vehicleType == "New") &&
+        event.registrationTypeSelectedValue == 2 &&
+        event.r4.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -1024,17 +1019,17 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                FocusScope.of(context)
-                    .requestFocus(focusregistrationfournumber);
+                // FocusScope.of(context)
+                //     .requestFocus(focusregistrationfournumber);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (yearofmanucontroller.text.isEmpty) {
+    } else if (event.yearOfManufacturing.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -1056,20 +1051,20 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                showYearPicker(context);
-                Scrollable.ensureVisible(
-                    yearofmanufacturingkey.currentContext!);
+                // showYearPicker(context);
+                // Scrollable.ensureVisible(
+                //     yearofmanufacturingkey.currentContext!);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (vehicletypecontroller.text == "New" &&
-        selectedregistrationtypeRadio == 1 &&
-        enginenumbercontroller.text.isEmpty) {
+    } else if (event.vehicleType == "New" &&
+        event.registrationTypeSelectedValue == 1 &&
+        event.engineNo.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -1091,17 +1086,16 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                FocusScope.of(context).requestFocus(focusenginenumber);
+                // FocusScope.of(context).requestFocus(focusenginenumber);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (enginenumbercontroller.text.isNotEmpty &&
-        enginenumbercontroller.text.length < 7) {
+    } else if (event.engineNo.isNotEmpty && event.engineNo.length < 7) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -1123,18 +1117,18 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                FocusScope.of(context).requestFocus(focusenginenumber);
+                // FocusScope.of(context).requestFocus(focusenginenumber);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (vehicletypecontroller.text == "New" &&
-        selectedregistrationtypeRadio == 1 &&
-        chassisnumbercontroller.text.isEmpty) {
+    } else if (event.vehicleType == "New" &&
+        event.registrationTypeSelectedValue == 1 &&
+        event.chassisNo.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -1156,17 +1150,16 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                FocusScope.of(context).requestFocus(focuschassisnumber);
+                // FocusScope.of(context).requestFocus(focuschassisnumber);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (chassisnumbercontroller.text.isNotEmpty &&
-        chassisnumbercontroller.text.length < 7) {
+    } else if (event.chassisNo.isNotEmpty && event.chassisNo.length < 7) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -1188,16 +1181,16 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                FocusScope.of(context).requestFocus(focuschassisnumber);
+                // FocusScope.of(context).requestFocus(focuschassisnumber);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (otherpi && contactpersoncontroller.text.isEmpty) {
+    } else if (event.otherFlow && event.contactPerson.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -1219,16 +1212,16 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                FocusScope.of(context).requestFocus(focuscontactperson);
+                // FocusScope.of(context).requestFocus(focuscontactperson);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (otherpi && contactmobilenumbercontroller.text.isEmpty) {
+    } else if (event.otherFlow && event.contactMobileNo.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -1250,18 +1243,18 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                FocusScope.of(context).requestFocus(focuscontactmobilenumber);
+                // FocusScope.of(context).requestFocus(focuscontactmobilenumber);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (otherpi &&
-        contactmobilenumbercontroller.text.isNotEmpty &&
-        contactmobilenumbercontroller.text.length < 10) {
+    } else if (event.otherFlow &&
+        event.contactMobileNo.isNotEmpty &&
+        event.contactMobileNo.length < 10) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -1283,16 +1276,16 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                FocusScope.of(context).requestFocus(focuscontactmobilenumber);
+                // FocusScope.of(context).requestFocus(focuscontactmobilenumber);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (prefixcontroller.text.isEmpty) {
+    } else if (event.prefix.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -1314,18 +1307,18 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                Provider.of<DropDownListNotifier>(context, listen: false)
-                    .getPrefix(prefixcontroller, context);
-                Scrollable.ensureVisible(prefixkey.currentContext!);
+                // Provider.of<DropDownListNotifier>(context, listen: false)
+                //     .getPrefix(prefixcontroller, context);
+                // Scrollable.ensureVisible(prefixkey.currentContext!);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (insurednamecontroller.text.isEmpty) {
+    } else if (event.insuredName.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -1347,16 +1340,16 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                FocusScope.of(context).requestFocus(focusinsuredname);
+                // FocusScope.of(context).requestFocus(focusinsuredname);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (proposaltypecontroller.text.isEmpty) {
+    } else if (event.proposalType.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -1378,18 +1371,19 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                Provider.of<DropDownListNotifier>(context, listen: false)
-                    .getProposaltype(proposaltypecontroller, context);
-                Scrollable.ensureVisible(proposaltypekey.currentContext!);
+                // Provider.of<DropDownListNotifier>(context, listen: false)
+                //     .getProposaltype(proposaltypecontroller, context);
+                // Scrollable.ensureVisible(proposaltypekey.currentContext!);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if ((ownpi || ishitapi) && odometercontroller.text.isEmpty) {
+    } else if ((event.ownFlow || event.hitApiFlow) &&
+        event.odometerReading.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -1411,16 +1405,17 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                FocusScope.of(context).requestFocus(focusodometer);
+                // FocusScope.of(context).requestFocus(focusodometer);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if ((ownpi || ishitapi) && preinsstatuscontroller.text.isEmpty) {
+    } else if ((event.ownFlow || event.hitApiFlow) &&
+        event.preInspectionStatus.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -1442,19 +1437,19 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                Provider.of<DropDownListNotifier>(context, listen: false)
-                    .getPreinspectionStatus(preinsstatuscontroller, context);
-                Scrollable.ensureVisible(
-                    preinspectionstatuskey.currentContext!);
+                // Provider.of<DropDownListNotifier>(context, listen: false)
+                //     .getPreinspectionStatus(preinsstatuscontroller, context);
+                // Scrollable.ensureVisible(
+                //     preinspectionstatuskey.currentContext!);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (ncbcontroller.text.isEmpty) {
+    } else if (event.ncbPercentage.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -1476,18 +1471,18 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                Provider.of<DropDownListNotifier>(context, listen: false)
-                    .geteligibleNcb(ncbcontroller, context);
-                Scrollable.ensureVisible(ncbkey.currentContext!);
+                // Provider.of<DropDownListNotifier>(context, listen: false)
+                //     .geteligibleNcb(ncbcontroller, context);
+                // Scrollable.ensureVisible(ncbkey.currentContext!);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (dentedpartscontroller.text.isEmpty) {
+    } /* else if (dentedpartscontroller.text.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -1518,7 +1513,7 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
       );
     } else if (scratchedpartscontroller.text.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -1549,7 +1544,7 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
       );
     } else if (brokenpartscontroller.text.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -1578,9 +1573,10 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
           ],
         ),
       );
-    } else if (ownpi && surveyorremarkscontroller.text.isEmpty) {
+    } */
+    else if (event.ownFlow && event.surveyorRemark.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -1602,18 +1598,18 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                FocusScope.of(context).requestFocus(focussurveyorremarks);
+                // FocusScope.of(context).requestFocus(focussurveyorremarks);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (ownpi &&
-        ispifeescollected &&
-        pifeeamountcontroller.text.isEmpty) {
+    } else if (event.ownFlow &&
+        isPiFeeCollected &&
+        event.piFeesAmount.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -1635,18 +1631,18 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                FocusScope.of(context).requestFocus(focuspifeeamount);
+                // FocusScope.of(context).requestFocus(focuspifeeamount);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (ownpi &&
-        ispifeescollected &&
-        conveyanceamountcontroller.text.isEmpty) {
+    } else if (event.ownFlow &&
+        isPiFeeCollected &&
+        event.conveyanceAmount.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -1668,18 +1664,18 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                FocusScope.of(context).requestFocus(focusconveyanceamount);
+                // FocusScope.of(context).requestFocus(focusconveyanceamount);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (ownpi &&
-        ispifeescollected &&
-        modeofpaymentcontroller.text.isEmpty) {
+    } else if (event.ownFlow &&
+        isPiFeeCollected &&
+        event.modeofPayment.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -1701,19 +1697,18 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                Provider.of<DropDownListNotifier>(context, listen: false)
-                    .getpaymentmode(modeofpaymentcontroller, context);
-                Scrollable.ensureVisible(modeofpaymentkey.currentContext!);
+                // Provider.of<DropDownListNotifier>(context, listen: false)
+                //     .getpaymentmode(modeofpaymentcontroller, context);
+                // Scrollable.ensureVisible(modeofpaymentkey.currentContext!);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (isshowsgicpolicynumber &&
-        sgicpolicynumbercontroller.text.isEmpty) {
+    } else if (isShowsgic && event.sgicPolicyNumber.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -1735,19 +1730,18 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                FocusScope.of(context).requestFocus(focussgicpolicynumber);
+                // FocusScope.of(context).requestFocus(focussgicpolicynumber);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (productcontroller.text == "PCCV" &&
-        vehiclecategorycontroller.text ==
-            "PCCV-2 wheelers - carrying passengers" &&
-        idvcontroller.text.isEmpty) {
+    } else if (event.productType == "PCCV" &&
+        event.productCategory == "PCCV-2 wheelers - carrying passengers" &&
+        event.idvofvehicle.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -1769,17 +1763,17 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                FocusScope.of(context).requestFocus(focusidv);
+                // FocusScope.of(context).requestFocus(focusidv);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (productcontroller.text == "MOTORISED-TWO WHEELERS" &&
-        idvcontroller.text.isEmpty) {
+    } else if (event.productType == "MOTORISED-TWO WHEELERS" &&
+        event.idvofvehicle.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -1801,16 +1795,16 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                FocusScope.of(context).requestFocus(focusidv);
+                // FocusScope.of(context).requestFocus(focusidv);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (otherpi && contactnoforsmscontroller.text.isEmpty) {
+    } else if (event.hitApiFlow && event.contactNoforSms.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -1832,18 +1826,18 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                FocusScope.of(context).requestFocus(focuscontactnumberforsms);
+                // FocusScope.of(context).requestFocus(focuscontactnumberforsms);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (otherpi &&
-        contactnoforsmscontroller.text.isNotEmpty &&
-        contactnoforsmscontroller.text.length < 10) {
+    } else if (event.hitApiFlow &&
+        event.contactNoforSms.isNotEmpty &&
+        event.contactNoforSms.length < 10) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -1865,16 +1859,16 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                FocusScope.of(context).requestFocus(focuscontactnumberforsms);
+                // FocusScope.of(context).requestFocus(focuscontactnumberforsms);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (otherpi && intimationremarkscontroller.text.isEmpty) {
+    } else if (event.hitApiFlow && event.intimationRemarks.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -1896,18 +1890,18 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                FocusScope.of(context).requestFocus(focusintimationremarks);
+                // FocusScope.of(context).requestFocus(focusintimationremarks);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (otherpi &&
-        contactnotosendlinkforselfpicontroller.text.isNotEmpty &&
-        contactnotosendlinkforselfpicontroller.text.length < 10) {
+    } else if (event.hitApiFlow &&
+        event.contactnoToSendlink.isNotEmpty &&
+        event.contactnoToSendlink.length < 10) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -1929,17 +1923,17 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                FocusScope.of(context)
-                    .requestFocus(focuscontactnumbertosendlinkforselfpi);
+                // FocusScope.of(context)
+                //     .requestFocus(focuscontactnumbertosendlinkforselfpi);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (otherpi && contactnotosendlinkforselfpicontroller.text.isEmpty) {
+    } else if (event.hitApiFlow && event.contactnoToSendlink.isEmpty) {
       showDialog(
-        context: context,
+        context: event.context,
         builder: (alertDialogContext) => AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -1961,66 +1955,71 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(alertDialogContext);
-                FocusScope.of(context)
-                    .requestFocus(focuscontactnumbertosendlinkforselfpi);
+                // FocusScope.of(context)
+                //     .requestFocus(focuscontactnumbertosendlinkforselfpi);
               },
               child: const Text('Ok'),
             ),
           ],
         ),
       );
-    } else if (proposaltypecontroller.text == "Market Renewal" ||
-        proposaltypecontroller.text == "Own Renewal") {
-      if (isrccopyupload && (ispreviouspolicyupload || isinvoicecopyupload)) {
-        if (ownpi) {
-          getpiownsave(
-              Provider.of<LoginFlowScreenNotifier>(context, listen: false)
-                  .partid
-                  .toString(),
-              ownpi,
-              context);
-        } else if (otherpi) {
-          getpiownsave(
-              Provider.of<PIDetailScreenNotifier>(context, listen: false)
-                  .othersurveyerpartyid
-                  .toString(),
-              ownpi,
-              context);
+    } else if (event.proposalType == "Market Renewal" ||
+        event.proposalType == "Own Renewal") {
+      if (isRcCopyUploaded &&
+          (isPreviousPolicyUploaded || isInvoiceCopyUploaded)) {
+        if (event.ownFlow) {
+          emit(ValidateSuccessState(event: event));
+          //savefun(event);
+          // getpiownsave(
+          //     Provider.of<LoginFlowScreenNotifier>(context, listen: false)
+          //         .partid
+          //         .toString(),
+          //     ownpi,
+          //     context);
+        } else if (event.hitApiFlow) {
+          emit(ValidateSuccessState(event: event));
+          //   savefun(event);
+          // getpiownsave(
+          //     Provider.of<PIDetailScreenNotifier>(context, listen: false)
+          //         .othersurveyerpartyid
+          //         .toString(),
+          //     ownpi,
+          //     context);
         } else {
-          branchid = pidetailsresponse.response![0].branchid.toString();
-          proinspectionid =
-              pidetailsresponse.response![0].preinspectionid.toString();
-          getpiownupdate(
-              Provider.of<LoginFlowScreenNotifier>(context, listen: false)
-                  .partid
-                  .toString(),
-              ownpi,
-              context);
+          // branchid = pidetailsresponse!.response![0].branchid.toString();
+          // proinspectionid =
+          //     pidetailsresponse.response![0].preinspectionid.toString();
+          // getpiownupdate(
+          //     Provider.of<LoginFlowScreenNotifier>(context, listen: false)
+          //         .partid
+          //         .toString(),
+          //     ownpi,
+          //     context);
         }
       } else {
-        if (intimationstatus == "Survey On Hold" ||
-            intimationstatus == "Request Assign to Surveyor") {
-          branchid = pidetailsresponse.response![0].branchid.toString();
-          proinspectionid =
-              pidetailsresponse.response![0].preinspectionid.toString();
-          getpiownupdate(
-              Provider.of<LoginFlowScreenNotifier>(context, listen: false)
-                  .partid
-                  .toString(),
-              ownpi,
-              context);
+        if (event.currentStatus == "Survey On Hold" ||
+            event.currentStatus == "Request Assign to Surveyor") {
+          // branchid = pidetailsresponse.response![0].branchid.toString();
+          // proinspectionid =
+          //     pidetailsresponse.response![0].preinspectionid.toString();
+          // getpiownupdate(
+          //     Provider.of<LoginFlowScreenNotifier>(context, listen: false)
+          //         .partid
+          //         .toString(),
+          //     ownpi,
+          //     context);
         } else {
           showDialog(
-            context: context,
+            context: event.context,
             builder: (alertDialogContext) => AlertDialog(
               content: SizedBox(
                   height: 60,
                   width: 60,
                   child: Center(
                       child: Text(
-                    isrccopyupload
+                    isRcCopyUploaded
                         ? "Please upload Previous Policy/Invoice copy"
-                        : ispreviouspolicyupload
+                        : isPreviousPolicyUploaded
                             ? "Please upload Rc Copy"
                             : "Please upload Rc Copy or Previous Policy/Invoice copy",
                     style: const TextStyle(color: redcolor),
@@ -2029,46 +2028,50 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
           );
         }
       }
-    } else if (proposaltypecontroller.text ==
+    } else if (event.proposalType ==
         "Market Renewal without previous insurance") {
-      if (isrccopyupload) {
-        if (ownpi) {
-          getpiownsave(
-              Provider.of<LoginFlowScreenNotifier>(context, listen: false)
-                  .partid
-                  .toString(),
-              ownpi,
-              context);
-        } else if (otherpi) {
-          getpiownsave(
-              Provider.of<PIDetailScreenNotifier>(context, listen: false)
-                  .othersurveyerpartyid
-                  .toString(),
-              ownpi,
-              context);
+      if (isRcCopyUploaded) {
+        if (event.ownFlow) {
+          emit(ValidateSuccessState(event: event));
+          // savefun(event);
+          // getpiownsave(
+          //     Provider.of<LoginFlowScreenNotifier>(context, listen: false)
+          //         .partid
+          //         .toString(),
+          //     ownpi,
+          //     context);
+        } else if (event.hitApiFlow) {
+          emit(ValidateSuccessState(event: event));
+          // savefun(event);
+          // getpiownsave(
+          //     Provider.of<PIDetailScreenNotifier>(context, listen: false)
+          //         .othersurveyerpartyid
+          //         .toString(),
+          //     ownpi,
+          //     context);
         } else {
           //TODO - UPDATE
-          getpiownsave(
-              Provider.of<PIDetailScreenNotifier>(context, listen: false)
-                  .othersurveyerpartyid
-                  .toString(),
-              ownpi,
-              context);
+          // getpiownsave(
+          //     Provider.of<PIDetailScreenNotifier>(context, listen: false)
+          //         .othersurveyerpartyid
+          //         .toString(),
+          //     ownpi,
+          //     context);
         }
       } else {
-        if (intimationstatus == "Request Assign to Surveyor") {
-          branchid = pidetailsresponse.response![0].branchid.toString();
-          proinspectionid =
-              pidetailsresponse.response![0].preinspectionid.toString();
-          getpiownupdate(
-              Provider.of<LoginFlowScreenNotifier>(context, listen: false)
-                  .partid
-                  .toString(),
-              ownpi,
-              context);
+        if (event.currentStatus == "Request Assign to Surveyor") {
+          // branchid = pidetailsresponse.response![0].branchid.toString();
+          // proinspectionid =
+          //     pidetailsresponse.response![0].preinspectionid.toString();
+          // getpiownupdate(
+          //     Provider.of<LoginFlowScreenNotifier>(context, listen: false)
+          //         .partid
+          //         .toString(),
+          //     ownpi,
+          //     context);
         } else {
           showDialog(
-            context: context,
+            context: event.context,
             builder: (alertDialogContext) => const AlertDialog(
               content: SizedBox(
                   height: 60,
@@ -2083,12 +2086,8 @@ class PIDetailBloc extends Bloc<PIDetailEvent, PIDetailState> {
         }
       }
     }
-  
-
-
   }
 
-  
   savePiDetailapi(
       PIDetailsSaveApiEvent event, Emitter<PIDetailState> emit) async {
     emit(PIDetailLoading());
@@ -3075,8 +3074,9 @@ navigatetonxtscreen(
   Navigator.push(
     event.context,
     MaterialPageRoute(
-      builder: (context) =>
-          PreInspectionScreen(preInspectionId: event.preInspectionId),
+      builder: (context) => PreInspectionScreen(
+          preInspectionId: event.preInspectionId,
+          isIgnore: event.isIgnore),
     ),
   );
 }

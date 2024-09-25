@@ -1,5 +1,6 @@
 // pi_detail_state.dart
 import 'package:equatable/equatable.dart';
+import 'package:mnovapi/bloc/pi_detail/pi_detail_event.dart';
 import 'package:mnovapi/models/pi_detail/pi_detail_save_model.dart';
 import 'package:tuple/tuple.dart';
 
@@ -31,6 +32,12 @@ class PIDetailGetApiState extends PIDetailState {
   final PiDetailResponse pidetailsresponse;
 
   const PIDetailGetApiState({required this.pidetailsresponse});
+}
+
+class ValidateSuccessState extends PIDetailState {
+  final ValidateTextFieldEvent event;
+
+  const ValidateSuccessState({required this.event});
 }
 
 class PIDetailSaveApiState extends PIDetailState {
@@ -280,13 +287,14 @@ class FileAlreadyUploaded extends PIDetailState {
   const FileAlreadyUploaded(this.tagName);
 }
 
-class PIDetailSubmitState extends PIDetailState{}
+class PIDetailSubmitState extends PIDetailState {}
 
 class FileUploadedSuccessfully extends PIDetailState {
   final String tagName;
   final List<RequestPifilesuploadObj> requestPifilesuploadObjlist;
 
-  const FileUploadedSuccessfully(this.tagName, this.requestPifilesuploadObjlist);
+  const FileUploadedSuccessfully(
+      this.tagName, this.requestPifilesuploadObjlist);
 }
 
 class NoFilePicked extends PIDetailState {}

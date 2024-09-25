@@ -14,7 +14,9 @@ import 'speeddail/preinspection_speed_dail.dart';
 
 class PreInspectionScreen extends StatefulWidget {
   final String preInspectionId;
-  const PreInspectionScreen({super.key, required this.preInspectionId});
+  final bool isIgnore;
+  const PreInspectionScreen(
+      {super.key, required this.preInspectionId, required this.isIgnore});
 
   @override
   State<PreInspectionScreen> createState() => _PreInspectionScreenState();
@@ -30,6 +32,7 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
   static TabController? tabController;
   String? tabName;
   List<bool> isImageUploaded = [];
+  bool isAllowNext = false;
   List<String> imageUrl = [];
   List<Tuple2<String?, String?>?> tabNameList = [];
   List<bool> isImageAvilable = [];
@@ -259,23 +262,37 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
       // Iterate over commonStrings
       for (int i = 0; i < commonStrings.length; i++) {
         if (tabName == commonStrings[i]!.item1) {
+          isAllowNext = true;
           // If tabName matches item1, return the network image
           return _buildImageFromNetwork(commonStrings[i]!.item2 ?? "");
         }
       }
+      {
+        isAllowNext = true;
+        // If an image has been uploaded, return the network image
+        return _buildImageFromNetwork(imageUrl[tabController!.index]);
+        /*   isAllowNext = false;
+        return Image.memory(
+          base64Decode(tabDetails[itemIndex].split(":")[1]),
+          width: MediaQuery.of(context).size.width * 3.5,
+          height: MediaQuery.of(context).size.height / 2,
+        ); */
+      }
       // If no match is found, return the decoded image from tabDetails
-      return Image.memory(
-        base64Decode(tabDetails[itemIndex].split(":")[1]),
-        width: MediaQuery.of(context).size.width * 3.5,
-        height: MediaQuery.of(context).size.height / 2,
-      );
     } else if (isImageUploaded.isNotEmpty &&
-        isImageAvilable[tabController!.index] &&
+        // isImageAvilable[tabController!.index] &&
         tabController!.index < isImageUploaded.length &&
-        isImageUploaded[tabController!.index]) {
+        // isImageUploaded[tabController!.index]
+
+        (isImageUploaded[tabController!
+            .index] /* ||
+            isImageAvilable[tabController!.index] */
+        )) {
+      isAllowNext = true;
       // If an image has been uploaded, return the network image
       return _buildImageFromNetwork(imageUrl[tabController!.index]);
     } else if (itemIndex < tabDetails.length) {
+      isAllowNext = false;
       // Ensure itemIndex is within bounds of tabDetails, then return the decoded image
       return Image.memory(
         base64Decode(tabDetails[itemIndex].split(":")[1]),
@@ -397,12 +414,14 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
         } else if (state is ShrigenUploadApiState) {
           debugPrint(state.imageURl);
           fileUniqueName = state.uniqueFileName;
-          isImageUploaded[tabController!.index] = true;
           if (tabName == "MORE") {
+            isImageUploaded[tabController!.index] = true;
             morelist.add(Tuple2(state.imageURl, state.extension));
           } else if (tabName == "SIGNATURE") {
+            isImageUploaded[tabController!.index] = true;
             signlist.add(Tuple2(state.imageURl, state.extension));
           } else {
+            isImageUploaded[tabController!.index] = true;
             imageUrl[tabController!.index] = state.imageURl;
           }
         } else if (state is FileAlreadyUploadedState) {
@@ -447,6 +466,7 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
               backgroundColor: Colors.green,
             ),
           );
+          isImageUploaded[tabController!.index] = false;
           // context.read<PreInspectionBloc>().add(GetImageFromApiEvent());
         } else if (state is FileUploadedSuccessfully) {
           debugPrint("FileUploadedSuccessfully");
@@ -465,37 +485,64 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
                   isImageUploaded[tabController!.index]
               ? "***** true"
               : "***** false");
-          if (/* commonStrings.isNotEmpty &&
-              commonStrings.length > tabController!.index */
-              (commonStrings.isNotEmpty &&
-                      commonStrings.length > tabController!.index) ||
-                  (isImageUploaded.isNotEmpty &&
-                      isImageUploaded[tabController!.index])) {
+          if (isImageUploaded[tabController!.index]) {
             context.read<PreInspectionBloc>().add(FileAlreadyUploadedEvent(
                 uniqueFileName:
-                    commonStrings[tabController!.index]!.item3 ?? ""));
+                    fileUniqueName /* commonStrings[tabController!.index]!.item3 ?? "" */));
           } else {
-            state.imageType == "Doc"
-                ? context.read<PreInspectionBloc>().add(TakeDocumentEvent(
-                      imageType: state.imageType,
-                      referenceValue: '',
-                      docType: state.tabType,
-                      docId: '',
-                      userId: '',
-                      branch: '',
-                      fileName: '',
-                      base64Image: '',
-                    ))
-                : context.read<PreInspectionBloc>().add(TakePhotEvent(
-                      imageType: state.imageType,
-                      referenceValue: '',
-                      docType: state.tabType,
-                      docId: '',
-                      userId: '',
-                      branch: '',
-                      fileName: '',
-                      base64Image: '',
-                    ));
+            if (/* commonStrings.isNotEmpty &&
+              commonStrings.length > tabController!.index */
+                (commonStrings.isNotEmpty &&
+                        commonStrings.length > tabController!.index) ||
+                    (isImageUploaded.isNotEmpty &&
+                        isImageUploaded[tabController!.index])) {
+              for (int i = 0; i < commonStrings.length; i++) {
+                if (tabName == commonStrings[i]!.item1 &&
+                    (isImageUploaded[tabController!.index] ||
+                        isImageAvilable[tabController!.index])) {
+                  return context.read<PreInspectionBloc>().add(
+                      FileAlreadyUploadedEvent(
+                          uniqueFileName:
+                              commonStrings[tabController!.index]!.item3 ??
+                                  ""));
+                } else if ((isImageUploaded[tabController!.index] ||
+                        isImageAvilable[tabController!.index]) ==
+                    false) {
+                  return context.read<PreInspectionBloc>().add(TakePhotEvent(
+                        imageType: state.imageType,
+                        referenceValue: '',
+                        docType: state.tabType,
+                        docId: '',
+                        userId: '',
+                        branch: '',
+                        fileName: '',
+                        base64Image: '',
+                      ));
+                }
+              }
+            } else {
+              state.imageType == "Doc"
+                  ? context.read<PreInspectionBloc>().add(TakeDocumentEvent(
+                        imageType: state.imageType,
+                        referenceValue: '',
+                        docType: state.tabType,
+                        docId: '',
+                        userId: '',
+                        branch: '',
+                        fileName: '',
+                        base64Image: '',
+                      ))
+                  : context.read<PreInspectionBloc>().add(TakePhotEvent(
+                        imageType: state.imageType,
+                        referenceValue: '',
+                        docType: state.tabType,
+                        docId: '',
+                        userId: '',
+                        branch: '',
+                        fileName: '',
+                        base64Image: '',
+                      ));
+            }
           }
         } else if (state is PreInspectionFailureState) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -537,7 +584,7 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
                       child: Padding(
                         padding: const EdgeInsets.only(left: 18.0, right: 10),
                         child: IgnorePointer(
-                          ignoring: false,
+                          ignoring: widget.isIgnore,
                           child: TabBar(
                             controller: tabController,
                             isScrollable: true,
@@ -572,42 +619,46 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
                       ),
                     ),
                   ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height / 1.23,
-                    child: PageView.builder(
-                        itemCount: tabDetails.length,
-                        controller: pageController,
-                        onPageChanged: (value) {
-                          context.read<PreInspectionBloc>().add(
-                              UpdateTabIndexEvent(
-                                  value, tabDetails[value].split(":")[0]));
-                        },
-                        itemBuilder: (BuildContext context, int itemIndex) {
-                          final String type =
-                              tabDetails[itemIndex].split(":")[0];
-                          final String data =
-                              tabDetails[itemIndex].split(":")[1];
-                          bool existsInTabData = tabNameList.any((tuple) =>
-                              tuple != null &&
-                              tuple.item1 ==
-                                  tabDetails[itemIndex].split(":")[0]);
+                  IgnorePointer(
+                    ignoring: widget.isIgnore,
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height / 1.23,
+                      child: PageView.builder(
+                          itemCount: tabDetails.length,
+                          controller: pageController,
+                          onPageChanged: (value) {
+                            context.read<PreInspectionBloc>().add(
+                                UpdateTabIndexEvent(
+                                    value, tabDetails[value].split(":")[0]));
+                          },
+                          itemBuilder: (BuildContext context, int itemIndex) {
+                            final String type =
+                                tabDetails[itemIndex].split(":")[0];
+                            final String data =
+                                tabDetails[itemIndex].split(":")[1];
+                            bool existsInTabData = tabNameList.any((tuple) =>
+                                tuple != null &&
+                                tuple.item1 ==
+                                    tabDetails[itemIndex].split(":")[0]);
 
-                          switch (type) {
-                            case "MORE":
-                              return _buildMoreContent(data, existsInTabData);
-                            case "VIDEO RECORDING":
-                              return _buildVideoRecordingContent(
-                                  existsInTabData);
-                            case "SIGNATURE":
-                              return _buildSignatureContent(
-                                  data,
-                                  existsInTabData,
-                                  BlocProvider.of<PreInspectionBloc>(context));
-                            default:
-                              return _buildDefaultContent(
-                                  itemIndex, existsInTabData);
-                          }
-                        }),
+                            switch (type) {
+                              case "MORE":
+                                return _buildMoreContent(data, existsInTabData);
+                              case "VIDEO RECORDING":
+                                return _buildVideoRecordingContent(
+                                    existsInTabData);
+                              case "SIGNATURE":
+                                return _buildSignatureContent(
+                                    data,
+                                    existsInTabData,
+                                    BlocProvider.of<PreInspectionBloc>(
+                                        context));
+                              default:
+                                return _buildDefaultContent(
+                                    itemIndex, existsInTabData);
+                            }
+                          }),
+                    ),
                   ),
                 ],
               ),
@@ -655,8 +706,28 @@ class _PreInspectionScreenState extends State<PreInspectionScreen>
                               .add(MoveToDoneEvent(ismovetodone: !isDone));
                           //}
                         } else {
-                          tabController!.animateTo((tabController!.index + 1));
-                          pageController.jumpToPage(tabController!.index);
+                          if (/* isImageUploaded[tabController!.index] 
+                              isImageAvilable[tabController!.index] */
+                              isAllowNext) {
+                            tabController!
+                                .animateTo((tabController!.index + 1));
+                            pageController.jumpToPage(tabController!.index);
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (alertDialogContext) =>
+                                  const AlertDialog(
+                                content: SizedBox(
+                                    height: 60,
+                                    width: 60,
+                                    child: Center(
+                                        child: Text(
+                                      "Image not Upload...!",
+                                      style: TextStyle(color: redcolor),
+                                    ))),
+                              ),
+                            );
+                          }
                         }
                         // debugPrint(isImageUploaded.length.toString());
                         // tabName == "SIGNATURE"
